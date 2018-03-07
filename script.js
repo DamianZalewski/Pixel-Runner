@@ -6,10 +6,14 @@ var cw = canvas.width;
 var ch = canvas.height;
 // variables
 // player
-var playerImage = new Image();
-playerImage.src = "img/character.png";
-var playerX = 50;
-var playerY = 50;
+var playerImage1 = new Image();
+playerImage1.src = "img/character1.png";
+var playerImage2 = new Image();
+playerImage2.src = "img/character2.png";
+var playerImage3 = new Image();
+playerImage3.src = "img/character3.png";
+var playerX = 200;
+var playerY = ch-200;
 var playerWidth = 50;
 var playerHeight = 50;
 // background
@@ -19,20 +23,55 @@ var backgroundX = 0;
 var backgroundY = 0;
 var backgroundWidth = cw;
 var backgroundHeight = ch;
+//----------------
+var playerAnimationTimer = 0;
 
-
+//----------------
+var jump = false;
+var jumpHigh = 30;
+var jumpCounter = 0;
 
 // initial game logic 
+init();
  setInterval(game, 1000/60);
 
 
  function game() {
      gameBoard();
      drawBackground();
+     jumpHandler();
      drawPlayer();
      backgroundX-=5;
+     playerAnimationTimer++;
      
  }
+
+function init()
+{
+    canvas.addEventListener("click",jumpStart);
+}
+function jumpStart(){
+    jump = true;
+}
+
+function jumpHandler(){
+    
+    if(jump && jumpCounter<jumpHigh){
+        playerY-=5;
+        jumpCounter++;
+    }else
+        if(jump && jumpCounter<2*jumpHigh)
+            {
+                playerY+=5;
+                jumpCounter++;
+            }
+    
+    if(jumpCounter>=2*jumpHigh)
+        {
+            jumpCounter = 0;
+            jump = false;
+        }
+}
 
 // draw background black game board
  function gameBoard() {
@@ -41,8 +80,23 @@ var backgroundHeight = ch;
  }
 
 // draw player character and his animation
+//----------------
+var playerAnimationStage = 1;
+
 function drawPlayer(){
-    ctx.drawImage(playerImage,playerX,playerY,playerWidth,playerHeight);
+    switch(playerAnimationStage){
+        case 0:ctx.drawImage(playerImage1,playerX,playerY,playerWidth,playerHeight);
+            break;
+        case 1:ctx.drawImage(playerImage2,playerX,playerY,playerWidth,playerHeight);
+            break;
+        case 2: ctx.drawImage(playerImage3,playerX,playerY,playerWidth,playerHeight);
+            break;
+    }
+    if(playerAnimationTimer==5) {
+        playerAnimationStage++;
+        playerAnimationTimer = 0;
+    }
+if(playerAnimationStage>2) playerAnimationStage = 0;
 }
 
 function drawBackground(){
