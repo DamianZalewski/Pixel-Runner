@@ -23,6 +23,7 @@ var backgroundX = 0;
 var backgroundY = 0;
 var backgroundWidth = cw;
 var backgroundHeight = ch;
+
 //----------------
 var playerAnimationTimer = 0;
 
@@ -30,6 +31,14 @@ var playerAnimationTimer = 0;
 var jump = false;
 var jumpHigh = 30;
 var jumpCounter = 0;
+
+//----------------
+var playerAnimationStage = 1;
+
+var floorY = playerY+playerHeight;
+//------------
+var holesCounter = 0;
+var holesArray = [];
 
 // initial game logic 
 init();
@@ -41,10 +50,17 @@ init();
      drawBackground();
      jumpHandler();
      drawPlayer();
-     backgroundX-=5;
+     drawFloor();
+     drawHole();
+     update();
+
+ }
+
+function update(){
+         backgroundX-=5;
      playerAnimationTimer++;
      
- }
+}
 
 function init()
 {
@@ -79,10 +95,8 @@ function jumpHandler(){
      ctx.fillRect(0, 0, cw, ch);
  }
 
-// draw player character and his animation
-//----------------
-var playerAnimationStage = 1;
 
+// draw player character and his animation
 function drawPlayer(){
     switch(playerAnimationStage){
         case 0:ctx.drawImage(playerImage1,playerX,playerY,playerWidth,playerHeight);
@@ -104,3 +118,16 @@ function drawBackground(){
     ctx.drawImage(backgroundImage,backgroundX+backgroundWidth,backgroundY,backgroundWidth,backgroundHeight);
     if(backgroundX<-backgroundWidth)backgroundX = 0;
 }
+
+function drawFloor(){
+    ctx.fillStyle = "green";
+     ctx.fillRect(0,floorY,cw,ch-floorY);
+}
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+function drawHole(){
+    if((Math.floor(Math.random()*100)+1)<=10){
+        holesCounter++;
+        holesArray[holesCounter] = cw+50;
+    }
+}
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
