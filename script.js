@@ -39,7 +39,13 @@ var floorY = playerY+playerHeight;
 //------------
 var holesCounter = 0;
 var holesArray = [];
-
+var holeWidth = 50;
+//-----------------
+var shotsArray = [];
+var shotWidth = 10;
+var shotHeight = 10;
+var shotY = playerY + playerHeight/2;
+var shotCounter = 0;
 // initial game logic 
 init();
  setInterval(game, 1000/60);
@@ -53,9 +59,28 @@ init();
      drawPlayer();
      drawFloor();
      drawHole();
+     drawShot();
      update();
+     checkHoleCollision();
 
  }
+function shot(){
+    shotsArray[shotCounter] = (playerX+playerWidth);
+    shotCounter++;
+}
+function shotHandler(){
+    
+}
+function shotCollision(){
+    
+}
+function drawShot(){
+    for(var i=0;i<shotsArray.length;i++){
+        ctx.fillStyle = "black";
+        ctx.fillRect(shotsArray[i],shotY,shotWidth,shotHeight);
+    }
+}
+
 
 function update(){
          backgroundX-=5;
@@ -65,7 +90,8 @@ function update(){
 
 function init()
 {
-    canvas.addEventListener("click",jumpStart);
+    canvas.addEventListener("click",jumpStart,false);
+    document.addEventListener("keydown",shot,false);
 }
 function jumpStart(){
     jump = true;
@@ -134,7 +160,7 @@ function tryHole(){
 function drawHole(){
     ctx.fillStyle = "black";
     for(var i = 0;i<holesArray.length;i++){
-        ctx.fillRect(holesArray[i],floorY,50,ch-floorY);
+        ctx.fillRect(holesArray[i],floorY,holeWidth,ch-floorY);
     }
 }
 
@@ -147,15 +173,16 @@ function moveHole(){
         }
     }
 }
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 function checkHoleCollision(){
-    for(var i=0;i<holesArray.length;i++){
-if (rect1.x < rect2.x + rect2.width &&
-   rect1.x + rect1.width > rect2.x &&
-   rect1.y < rect2.y + rect2.height &&
-   rect1.height + rect1.y > rect2.y) {
-    // collision detected!
+for(var i=0;i<holesArray.length;i++){
+    if(((holesArray[i]<=playerX+playerWidth && 
+      holesArray[i]>=playerX) ||
+       (holesArray[i]+holeWidth <= playerX+playerWidth &&
+        holesArray[i]+holeWidth >= playerX
+        )) && !jump
+      ) console.log("GAME OVER!!!");
 }
-    }
 }
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
