@@ -16,6 +16,17 @@ var playerX = 200;
 var playerY = ch-200;
 var playerWidth = 50;
 var playerHeight = 50;
+//player lifes variables
+var playerLifes = 3;
+var playerLifesImage = new Image();
+playerLifesImage.src = "img/playerLife.png"
+var playerLifeX = 30;
+var playerLifeY = 30;
+var playerLifeWidth = 30;
+var playerLifeHeight = 30;
+var playerLifeSpace = 20+playerLifeWidth;
+
+
 // background
 var backgroundImage = new Image();
 backgroundImage.src = "img/background.png";
@@ -41,7 +52,8 @@ var holesCounter = 0;
 var holesArray = [];
 var holeWidth = 50;
 //-----------------
-var shotsArray = [];
+var shotsXArray = [];
+var shotsYArray = [];
 var shotWidth = 10;
 var shotHeight = 10;
 var shotY = playerY + playerHeight/2;
@@ -60,25 +72,45 @@ init();
      drawFloor();
      drawHole();
      drawShot();
+     drawlifes();
      update();
      checkHoleCollision();
 
  }
+
+
+function drawlifes(){
+    // 1.show how many lifes player have
+    for(var i=0;i<playerLifes;i++){
+            ctx.drawImage(playerLifesImage,playerLifeX+playerLifeSpace*i,playerLifeY,playerLifeWidth,playerLifeHeight);
+    } 
+}
+
 function shot(){
-    shotsArray[shotCounter] = (playerX+playerWidth);
+    shotY = playerY + playerHeight/2;
+    shotsXArray[shotCounter] = (playerX+playerWidth);
+    shotsYArray[shotCounter] = (shotY);
     shotCounter++;
 }
-function shotHandler(){
-    
+function shotMove(){
+    for(var i=0;i<shotsXArray.length;i++){
+        shotsXArray[i] +=10;
+        if(shotsXArray[i]>cw){
+            shotsXArray.splice(i,1);
+            shotsYArray.splice(i,1);
+            shotCounter--;
+        }
+    }
 }
 function shotCollision(){
+ //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
 }
 function drawShot(){
-    for(var i=0;i<shotsArray.length;i++){
+    for(var i=0;i<shotsXArray.length;i++){
         ctx.fillStyle = "black";
-        ctx.fillRect(shotsArray[i],shotY,shotWidth,shotHeight);
-    }
+        ctx.fillRect(shotsXArray[i],shotsYArray[i],shotWidth,shotHeight);
+    }   
 }
 
 
@@ -86,6 +118,7 @@ function update(){
          backgroundX-=5;
      playerAnimationTimer++;
      moveHole();
+     shotMove();
 }
 
 function init()
@@ -181,7 +214,14 @@ for(var i=0;i<holesArray.length;i++){
        (holesArray[i]+holeWidth <= playerX+playerWidth &&
         holesArray[i]+holeWidth >= playerX
         )) && !jump
-      ) console.log("GAME OVER!!!");
+      ){
+        if(playerLifes==0){
+            console.log("GAME OVER!!!");
+        }else{
+            playerLifes--;
+        }
+        
+    } 
 }
 }
 
