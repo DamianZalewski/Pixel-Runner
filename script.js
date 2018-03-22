@@ -25,7 +25,7 @@ var playerLifeY = 30;
 var playerLifeWidth = 30;
 var playerLifeHeight = 30;
 var playerLifeSpace = 20+playerLifeWidth;
-
+var mortal = true;
 
 // background
 var backgroundImage = new Image();
@@ -52,6 +52,14 @@ var holesCounter = 0;
 var holesArray = [];
 var holeWidth = 50;
 //-----------------
+var birdsCounter = 0;
+var birdXArray = [];
+var birdYArray = [];
+var birdWidth = 40;
+var birdHeight = 40;
+var birdImage = new Image();
+birdImage.src = "img/bird.png";
+//-----------------
 var shotsXArray = [];
 var shotsYArray = [];
 var shotWidth = 10;
@@ -65,6 +73,7 @@ init();
 
  function game() {
      tryHole();
+     tryBird();
      gameBoard();
      drawBackground();
      jumpHandler();
@@ -73,11 +82,39 @@ init();
      drawHole();
      drawShot();
      drawlifes();
+     drawBird();
      update();
      checkHoleCollision();
 
  }
+//-----------------------------
 
+function tryBird(){
+        if((Math.floor(Math.random()*300)+1)==1){
+    
+        birdXArray[birdsCounter] = cw+50+birdWidth;
+        birdYArray[birdsCounter] = floorY - Math.floor(Math.random()*150+50);
+                birdsCounter++;
+    }
+}
+function drawBird(){
+    for(var i = 0;i<birdXArray.length;i++){
+        ctx.drawImage(birdImage,birdXArray[i],birdYArray[i],birdWidth,birdHeight);
+    }
+}
+
+function moveBird(){
+    for(var i=0;i<birdXArray.length;i++){
+        birdXArray[i] -=10;
+        if(birdXArray[i]<=-100){
+          birdXArray.splice(i,1);
+          birdYArray.splice(i,1);
+        birdsCounter--;
+        }
+    }
+}
+
+//-----------------------------
 
 function drawlifes(){
     // 1.show how many lifes player have
@@ -102,10 +139,7 @@ function shotMove(){
         }
     }
 }
-function shotCollision(){
- //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-}
+
 function drawShot(){
     for(var i=0;i<shotsXArray.length;i++){
         ctx.fillStyle = "black";
@@ -118,6 +152,7 @@ function update(){
          backgroundX-=5;
      playerAnimationTimer++;
      moveHole();
+     moveBird();
      shotMove();
 }
 
@@ -218,11 +253,20 @@ for(var i=0;i<holesArray.length;i++){
         if(playerLifes==0){
             console.log("GAME OVER!!!");
         }else{
-            playerLifes--;
+           if(mortal){
+               playerLifes--;
+               mortal = false;
+               setTimeout(switchMortal,3000);
+           }
+            
         }
         
     } 
 }
+}
+
+function switchMortal(){
+    mortal = true;
 }
 
 
