@@ -66,6 +66,8 @@ var shotWidth = 10;
 var shotHeight = 10;
 var shotY = playerY + playerHeight/2;
 var shotCounter = 0;
+var shotAmmo = 5;
+var shotAmmoReload = 3000;
 // initial game logic 
 init();
  setInterval(game, 1000/60);
@@ -85,6 +87,8 @@ init();
      drawBird();
      update();
      checkHoleCollision();
+     birdPlayerCollision();
+     birdBulletCollision();
 
  }
 //-----------------------------
@@ -114,6 +118,31 @@ function moveBird(){
     }
 }
 
+function birdPlayerCollision(){
+    for(var i=0;i<birdXArray.length;i++){
+    if (playerX < birdXArray[i] + birdWidth &&
+   playerX + playerWidth > birdXArray[i] &&
+   playerY < birdYArray[i] + birdHeight &&
+   playerHeight + playerY > birdYArray[i]) {
+    hitDetected();
+}
+    }
+}
+
+function birdBulletCollision(){
+    for(var i=0;i<shotsXArray.length;i++){
+        for(var j=0;j<birdXArray.length;j++){
+    if (shotsXArray[i] < birdXArray[j] + birdWidth &&
+   shotsXArray[i] + shotWidth > birdXArray[j] &&
+   shotsYArray[i] < birdYArray[j] + birdHeight &&
+   shotHeight + shotsYArray[i] > birdYArray[j]) {
+            //destroy bird and bullet
+        birdXArray[j] = -100;
+        shotsXArray[i] = cw;
+}}
+    }
+}
+
 //-----------------------------
 
 function drawlifes(){
@@ -124,10 +153,13 @@ function drawlifes(){
 }
 
 function shot(){
+    if(shotAmmo!=0){
+        shotAmmo--;
     shotY = playerY + playerHeight/2;
     shotsXArray[shotCounter] = (playerX+playerWidth);
     shotsYArray[shotCounter] = (shotY);
     shotCounter++;
+    }
 }
 function shotMove(){
     for(var i=0;i<shotsXArray.length;i++){
@@ -158,9 +190,16 @@ function update(){
 
 function init()
 {
-    canvas.addEventListener("click",jumpStart,false);
-    document.addEventListener("keydown",shot,false);
+    document.addEventListener("keydown",jumpStart,false);
+    canvas.addEventListener("click",shot,false);
+    setInterval(reloadAmmo,shotAmmoReload);
 }
+function reloadAmmo(){
+    if(shotAmmo<5){
+        shotAmmo++;
+    }
+}
+
 function jumpStart(){
     jump = true;
 }
@@ -250,7 +289,13 @@ for(var i=0;i<holesArray.length;i++){
         holesArray[i]+holeWidth >= playerX
         )) && !jump
       ){
-        if(playerLifes==0){
+        hitDetected();
+    } 
+}
+}
+
+function hitDetected(){
+            if(playerLifes==0){
             console.log("GAME OVER!!!");
         }else{
            if(mortal){
@@ -260,9 +305,6 @@ for(var i=0;i<holesArray.length;i++){
            }
             
         }
-        
-    } 
-}
 }
 
 function switchMortal(){
