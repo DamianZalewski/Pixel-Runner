@@ -40,9 +40,9 @@ var playerAnimationTimer = 0;
 
 //----------------
 var jump = false;
-var jumpHigh = 30;
+var jumpHigh = 50;
 var jumpCounter = 0;
-
+var jumpSpeed = 5;
 //----------------
 var playerAnimationStage = 1;
 
@@ -68,6 +68,15 @@ var shotY = playerY + playerHeight/2;
 var shotCounter = 0;
 var shotAmmo = 5;
 var shotAmmoReload = 3000;
+var bulletImage  = new Image();
+bulletImage.src = "img/bullet.png";
+var bulletWidth = 50;
+var bulletHeight = 50;
+var bulletX = cw-100;
+var bulletY =20;
+//----------------
+var score=0;
+var scoreIncreaseTime = 1000;
 // initial game logic 
 init();
  setInterval(game, 1000/60);
@@ -85,12 +94,30 @@ init();
      drawShot();
      drawlifes();
      drawBird();
+     drawAmmo();
+     drawScore();
      update();
      checkHoleCollision();
      birdPlayerCollision();
      birdBulletCollision();
 
  }
+//----------------------------
+function drawScore(){
+    ctx.fillStyle = "white";
+    ctx.font = "50px arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Score: "+score,cw/2,80);
+}
+
+function changeScoreByTime(){
+    score+=10;
+}
+
+function changeScoreByEvent(){
+    score +=100;
+}
+
 //-----------------------------
 
 function tryBird(){
@@ -139,6 +166,7 @@ function birdBulletCollision(){
             //destroy bird and bullet
         birdXArray[j] = -100;
         shotsXArray[i] = cw;
+        changeScoreByEvent();
 }}
     }
 }
@@ -179,6 +207,11 @@ function drawShot(){
     }   
 }
 
+function drawAmmo(){
+    for(var i = 0;i<shotAmmo;i++){
+        ctx.drawImage(bulletImage,bulletX-i*bulletWidth,bulletY,bulletWidth,bulletHeight);
+    }
+}
 
 function update(){
          backgroundX-=5;
@@ -193,6 +226,7 @@ function init()
     document.addEventListener("keydown",jumpStart,false);
     canvas.addEventListener("click",shot,false);
     setInterval(reloadAmmo,shotAmmoReload);
+    setInterval(changeScoreByTime,scoreIncreaseTime);
 }
 function reloadAmmo(){
     if(shotAmmo<5){
@@ -207,12 +241,14 @@ function jumpStart(){
 function jumpHandler(){
     
     if(jump && jumpCounter<jumpHigh){
-        playerY-=5;
+        playerY-=jumpSpeed;
         jumpCounter++;
+        
     }else
         if(jump && jumpCounter<2*jumpHigh)
             {
-                playerY+=5;
+         
+                playerY+=jumpSpeed;
                 jumpCounter++;
             }
     
