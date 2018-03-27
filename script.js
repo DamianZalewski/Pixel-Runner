@@ -59,21 +59,29 @@ var birdWidth = 40;
 var birdHeight = 40;
 var birdImage = new Image();
 birdImage.src = "img/bird.png";
+var swingCounter = 0;
+var swingBool = false;
 //-----------------
 var shotsXArray = [];
 var shotsYArray = [];
-var shotWidth = 10;
-var shotHeight = 10;
+var shotWidth = 30;
+var shotHeight = 30;
 var shotY = playerY + playerHeight/2;
 var shotCounter = 0;
 var shotAmmo = 5;
 var shotAmmoReload = 3000;
 var bulletImage  = new Image();
 bulletImage.src = "img/bullet.png";
+var bulletImage2  = new Image();
+bulletImage2.src = "img/bullet2.png";
+var bulletImage3  = new Image();
+bulletImage3.src = "img/bullet3.png";
 var bulletWidth = 50;
 var bulletHeight = 50;
 var bulletX = cw-100;
 var bulletY =20;
+var bulletAnimationStage = 0;
+var bulletAnimationTimer = 0;
 //----------------
 var score=0;
 var scoreIncreaseTime = 1000;
@@ -121,10 +129,10 @@ function changeScoreByEvent(){
 //-----------------------------
 
 function tryBird(){
-        if((Math.floor(Math.random()*300)+1)==1){
+        if((Math.floor(Math.random()*200    )+1)==1){
     
         birdXArray[birdsCounter] = cw+50+birdWidth;
-        birdYArray[birdsCounter] = floorY - Math.floor(Math.random()*150+50);
+        birdYArray[birdsCounter] = floorY - Math.floor(Math.random()*100+100);
                 birdsCounter++;
     }
 }
@@ -144,7 +152,17 @@ function moveBird(){
         }
     }
 }
-
+//-----------------------------------------------------
+function birdSwing(){
+            if(swingCounter>8) swingBool=!swingBool;
+    else if(swingCounter<-8) swingBool =!swingBool;
+        if(swingBool) swingCounter++
+        else swingCounter--;
+    for(var i = 0;i<birdsCounter;i++){
+        birdYArray[i] += swingCounter;
+    }
+}
+//-----------------------------------------------------
 function birdPlayerCollision(){
     for(var i=0;i<birdXArray.length;i++){
     if (playerX < birdXArray[i] + birdWidth &&
@@ -202,23 +220,39 @@ function shotMove(){
 
 function drawShot(){
     for(var i=0;i<shotsXArray.length;i++){
-        ctx.fillStyle = "black";
-        ctx.fillRect(shotsXArray[i],shotsYArray[i],shotWidth,shotHeight);
-    }   
+     
+     
+    switch(bulletAnimationStage){
+        case 0:ctx.drawImage(bulletImage,shotsXArray[i],shotsYArray[i],shotWidth,shotHeight);
+            break;
+        case 1:ctx.drawImage(bulletImage2,shotsXArray[i],shotsYArray[i],shotWidth,shotHeight);
+            break;
+        case 2:ctx.drawImage(bulletImage3,shotsXArray[i],shotsYArray[i],shotWidth,shotHeight);
+            break;
+    }
+         } 
+    if(bulletAnimationTimer==5) {
+        bulletAnimationStage++;
+        bulletAnimationTimer = 0;
+    }
+if(bulletAnimationStage>2) bulletAnimationStage = 0;
 }
 
 function drawAmmo(){
     for(var i = 0;i<shotAmmo;i++){
-        ctx.drawImage(bulletImage,bulletX-i*bulletWidth,bulletY,bulletWidth,bulletHeight);
+        ctx.drawImage(bulletImage,bulletX-i*bulletWidth/2,bulletY,bulletWidth,bulletHeight);
     }
+     
 }
 
 function update(){
          backgroundX-=5;
      playerAnimationTimer++;
+     bulletAnimationTimer++;
      moveHole();
      moveBird();
      shotMove();
+     birdSwing();
 }
 
 function init()
