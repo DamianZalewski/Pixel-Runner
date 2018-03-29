@@ -85,12 +85,74 @@ var bulletAnimationTimer = 0;
 //----------------
 var score=0;
 var scoreIncreaseTime = 1000;
+//----------------
+var gameStage  = 0;
+//----------------
+var buttonWith = 400;
+var buttonHeight = 100;
+var buttonX = cw/2 - buttonWith/2;
+var buttonY = ch/2 - buttonHeight*3;
+// 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu  
+
+
+
 // initial game logic 
-init();
  setInterval(game, 1000/60);
 
 
  function game() {
+     switch(gameStage){
+         case 0 : mainMenu();
+             break;
+         case 1 :   
+             gameLogic();
+             break;
+         case 2 : stopMenu();//!!!!!!!!!!!!!!!!!!!!!!!!!
+             break;
+         case 3 : gameOverMenu();//!!!!!!!!!!!!!!!!!!!!!!!!!!!
+             break;
+     }
+     
+
+
+ }
+//----------------------------
+function mainMenu(){
+    drawMainMenu();
+    canvas.addEventListener("click",mainMenuListener,false);
+}
+function drawMainMenu(){
+    ctx.fillStyle = "rgb(23, 130, 222)";
+    ctx.fillRect(0,0,cw,ch);
+    ctx.fillStyle = "rgb(44, 168, 33)";
+    ctx.fillRect(buttonX,buttonY,buttonWith,buttonHeight);
+    ctx.fillRect(buttonX,buttonY+buttonHeight*2,buttonWith,buttonHeight);   
+}
+
+function mainMenuListener(ev){
+    if(
+       ev.clientY>=buttonY && 
+        ev.clientY <= buttonY + buttonHeight && 
+        ev.clientX >=buttonX &&  
+        ev.clientX <=buttonX +buttonWith
+
+      ) {
+        init();
+        gameStage = 1;
+    }
+    else if(
+            ev.clientY>=buttonY+2*buttonHeight && 
+        ev.clientY <= buttonY + 3*buttonHeight && 
+        ev.clientX >=buttonX &&  
+        ev.clientX <=buttonX +buttonWith
+    ){
+        alert("top list");
+        // ---------------- write functions for top lists !-----------------------
+        }
+}
+
+//----------------------------
+function gameLogic(){
      tryHole();
      tryBird();
      gameBoard();
@@ -108,8 +170,9 @@ init();
      checkHoleCollision();
      birdPlayerCollision();
      birdBulletCollision();
+}
 
- }
+
 //----------------------------
 function drawScore(){
     ctx.fillStyle = "white";
