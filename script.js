@@ -88,10 +88,12 @@ var scoreIncreaseTime = 1000;
 //----------------
 var gameStage  = 0;
 //----------------
-var buttonWith = 400;
-var buttonHeight = 100;
-var buttonX = cw/2 - buttonWith/2;
-var buttonY = ch/2 - buttonHeight*3;
+var mainMenubuttonWith = 400;
+var mainMenubuttonHeight = 100;
+var mainMenubuttonX = cw/2 - mainMenubuttonWith/2;
+var mainMenubuttonY = ch/2 - mainMenubuttonHeight*3;
+//-----------------
+ 
 // 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu  
 
 
@@ -107,7 +109,7 @@ var buttonY = ch/2 - buttonHeight*3;
          case 1 :   
              gameLogic();
              break;
-         case 2 : stopMenu();//!!!!!!!!!!!!!!!!!!!!!!!!!
+         case 2 : stopMenu();
              break;
          case 3 : gameOverMenu();//!!!!!!!!!!!!!!!!!!!!!!!!!!!
              break;
@@ -116,6 +118,20 @@ var buttonY = ch/2 - buttonHeight*3;
 
 
  }
+//---------------------------
+function stopMenu(){
+    canvas.removeEventListener("click",shot);
+    canvas.removeEventListener("keydown",keyHandler);
+    
+    
+    document.addEventListener("keydown",keyHandler,false);
+    canvas.addEventListener("click",shot,false);
+}
+
+function drawStopMenu(){
+    
+}
+
 //----------------------------
 function mainMenu(){
     drawMainMenu();
@@ -125,31 +141,33 @@ function drawMainMenu(){
     ctx.fillStyle = "rgb(23, 130, 222)";
     ctx.fillRect(0,0,cw,ch);
     ctx.fillStyle = "rgb(44, 168, 33)";
-    ctx.fillRect(buttonX,buttonY,buttonWith,buttonHeight);
-    ctx.fillRect(buttonX,buttonY+buttonHeight*2,buttonWith,buttonHeight);   
+    ctx.fillRect(mainMenubuttonX,mainMenubuttonY,mainMenubuttonWith,mainMenubuttonHeight);
+    ctx.fillRect(mainMenubuttonX,mainMenubuttonY+mainMenubuttonHeight*2,mainMenubuttonWith,mainMenubuttonHeight);   
 }
 
 function mainMenuListener(ev){
     if(
-       ev.clientY>=buttonY && 
-        ev.clientY <= buttonY + buttonHeight && 
-        ev.clientX >=buttonX &&  
-        ev.clientX <=buttonX +buttonWith
+       ev.clientY>=mainMenubuttonY && 
+        ev.clientY <= mainMenubuttonY + mainMenubuttonHeight && 
+        ev.clientX >=mainMenubuttonX &&  
+        ev.clientX <=mainMenubuttonX +mainMenubuttonWith
 
       ) {
         init();
+        canvas.removeEventListener("click",mainMenuListener);
         gameStage = 1;
     }
     else if(
-            ev.clientY>=buttonY+2*buttonHeight && 
-        ev.clientY <= buttonY + 3*buttonHeight && 
-        ev.clientX >=buttonX &&  
-        ev.clientX <=buttonX +buttonWith
+            ev.clientY>=mainMenubuttonY+2*mainMenubuttonHeight && 
+        ev.clientY <= mainMenubuttonY + 3*mainMenubuttonHeight && 
+        ev.clientX >=mainMenubuttonX &&  
+        ev.clientX <=mainMenubuttonX +mainMenubuttonWith
     ){
         alert("top list");
+        canvas.removeEventListener("click",mainMenuListener);
         // ---------------- write functions for top lists !-----------------------
         }
-}
+}   
 
 //----------------------------
 function gameLogic(){
@@ -320,11 +338,17 @@ function update(){
 
 function init()
 {
-    document.addEventListener("keydown",jumpStart,false);
+    document.addEventListener("keydown",keyHandler,false);
     canvas.addEventListener("click",shot,false);
     setInterval(reloadAmmo,shotAmmoReload);
     setInterval(changeScoreByTime,scoreIncreaseTime);
 }
+
+function keyHandler(ev){
+    if(ev.keyCode == 27) gameStage = 2;
+    jumpStart();
+}
+
 function reloadAmmo(){
     if(shotAmmo<5){
         shotAmmo++;
