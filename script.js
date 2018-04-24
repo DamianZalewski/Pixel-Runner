@@ -93,14 +93,30 @@ var mainMenubuttonHeight = 100;
 var mainMenubuttonX = cw/2 - mainMenubuttonWith/2;
 var mainMenubuttonY = ch/2 - mainMenubuttonHeight*3;
 //-----------------
- 
+var stopMenuBackgroundWidth = 500;
+var stopMenuBackgroundHeight = 300;
+var stopMenuX = cw/2 - stopMenuBackgroundWidth/2;
+var stopMenuY = 100;
+var stopMenuButtonWidth = 300;
+var stopMenuButtonHeight = 50;
+var stopMenuButtonX = stopMenuX + (stopMenuBackgroundWidth/2) - (stopMenuButtonWidth/2);
+var stopMenuButtonY = stopMenuY+stopMenuBackgroundHeight - 100;
+var stopButtonSpace = 100;
+//----------------------------
+var gameOverMenuButtonWidth = 350;
+var gameOverMenuButtonHeight = 50;
+var gameOverMenuButtonX = cw/2- gameOverMenuButtonWidth/2;
+var gameOverMenuButtonY = ch/2;
+
+//----------------------------
 // 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu  
 
 
 
 // initial game logic 
  setInterval(game, 1000/60);
-
+var bulletInterval;
+var scoreInterval;
 
  function game() {
      switch(gameStage){
@@ -111,29 +127,149 @@ var mainMenubuttonY = ch/2 - mainMenubuttonHeight*3;
              break;
          case 2 : stopMenu();
              break;
-         case 3 : gameOverMenu();//!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         case 3 : gameOverMenu();
              break;
      }
-     
-
 
  }
+//-------------------------
+function gameOverMenu(){
+    stopIntervals();
+    document.addEventListener("click",gameOverMenuHandler);
+    canvas.removeEventListener("click",shot);
+    document.removeEventListener("keydown",keyHandler);
+    ctx.fillStyle = "red";
+    ctx.fillRect(0,0,cw,ch);
+    ctx.fillStyle = "black";
+    ctx.font = "50px arial";
+    ctx.textAlign = "center";
+    ctx.fillText("GAME OVER",cw/2,ch/2-200)
+    ctx.fillText("Score: "+score,cw/2,ch/2-150);
+    ctx.fillRect(gameOverMenuButtonX,gameOverMenuButtonY,gameOverMenuButtonWidth,gameOverMenuButtonHeight);
+
+}
+
+function gameOverMenuHandler(ev){
+
+    if(     ev.clientY>=gameOverMenuButtonY && 
+        ev.clientY <= gameOverMenuButtonY + gameOverMenuButtonHeight && 
+        ev.clientX >=gameOverMenuButtonX &&  
+        ev.clientX <=gameOverMenuButtonX +gameOverMenuButtonWidth
+      ){
+    gameStage = 0;
+    document.removeEventListener("click",gameOverMenuHandler);
+    fullReset();
+    }
+}
+
+//--------------------------
+function fullReset(){
+ playerY = ch-200;
+//player lifes variables
+ playerLifes = 3;
+ mortal = true;
+ backgroundX = 0;
+ backgroundY = 0;
+//---------------
+ playerAnimationTimer = 0;
+//---------------
+ jump = false;
+ jumpHigh = 50;
+ jumpCounter = 0;
+ jumpSpeed = 5;
+//--------------
+ playerAnimationStage = 1;
+ floorY = playerY+playerHeight;
+//-----------
+ holesCounter = 0;
+ holesArray = [];
+//----------------
+ birdsCounter = 0;
+ birdXArray = [];
+ birdYArray = [];
+ swingCounter = 0;
+ swingBool = false;
+//----------------
+ shotsXArray = [];
+ shotsYArray = [];
+ shotY = playerY + playerHeight/2;
+ shotCounter = 0;
+ shotAmmo = 5;
+ shotAmmoReload = 3000;
+ bulletX = cw-100;
+ bulletY =20;
+ bulletAnimationStage = 0;
+ bulletAnimationTimer = 0;
+//--------------
+ score=0;
+ scoreIncreaseTime = 1000;
+//---------------  
+}
+
+
 //---------------------------
 function stopMenu(){
+    stopIntervals();
     canvas.removeEventListener("click",shot);
-    canvas.removeEventListener("keydown",keyHandler);
-    
-    
+    document.removeEventListener("keydown",keyHandler);
+    document.addEventListener("keydown",stopMenuHandler);
+    document.addEventListener("click",stopMenuHandler);
+    drawStopMenu();
+
+}
+
+function stopMenuHandler(ev){
+        if(ev.keyCode==27)
+        {
     document.addEventListener("keydown",keyHandler,false);
+    document.removeEventListener("keydown",stopMenuHandler);
+    document.removeEventListener("click",stopMenuHandler);
     canvas.addEventListener("click",shot,false);
+            gameStage = 1;
+            startIntervals();
+        }
+        else if ( 
+        ev.clientY>=stopMenuButtonY && 
+        ev.clientY <= stopMenuButtonY + stopMenuButtonHeight && 
+        ev.clientX >=stopMenuButtonX &&  
+        ev.clientX <=stopMenuButtonX +stopMenuButtonWidth
+            ){
+            // button nr 2 / exit
+            fullReset();
+            gameStage = 0;
+                document.removeEventListener("keydown",stopMenuHandler);
+    document.removeEventListener("click",stopMenuHandler);
+            
+        }
+    else if (
+            ev.clientY>=stopMenuButtonY-stopButtonSpace && 
+        ev.clientY <= stopMenuButtonY + stopMenuButtonHeight - stopButtonSpace && 
+        ev.clientX >=stopMenuButtonX &&  
+        ev.clientX <=stopMenuButtonX +stopMenuButtonWidth
+    ){
+        // button nr 1 / back to the game
+    document.addEventListener("keydown",keyHandler,false);
+    document.removeEventListener("keydown",stopMenuHandler);
+    document.removeEventListener("click",stopMenuHandler);
+    canvas.addEventListener("click",shot,false);
+            gameStage = 1;
+            startIntervals();
+    }
+      
 }
 
 function drawStopMenu(){
-    
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(stopMenuX,stopMenuY,stopMenuBackgroundWidth,stopMenuBackgroundHeight);
+    ctx.fillStyle = "green";
+    ctx.fillRect(stopMenuButtonX,stopMenuButtonY,stopMenuButtonWidth,stopMenuButtonHeight);
+    ctx.fillStyle = "red";
+    ctx.fillRect(stopMenuButtonX,stopMenuButtonY-stopButtonSpace,stopMenuButtonWidth,stopMenuButtonHeight);
 }
 
 //----------------------------
 function mainMenu(){
+    stopIntervals();
     drawMainMenu();
     canvas.addEventListener("click",mainMenuListener,false);
 }
@@ -340,13 +476,23 @@ function init()
 {
     document.addEventListener("keydown",keyHandler,false);
     canvas.addEventListener("click",shot,false);
-    setInterval(reloadAmmo,shotAmmoReload);
-    setInterval(changeScoreByTime,scoreIncreaseTime);
+startIntervals();
+}
+
+function stopIntervals(){
+    clearInterval(bulletInterval);
+    clearInterval(scoreInterval);
+}
+
+function startIntervals(){
+      bulletInterval =   setInterval(reloadAmmo,shotAmmoReload);
+      scoreInterval =  setInterval(changeScoreByTime,scoreIncreaseTime);
 }
 
 function keyHandler(ev){
     if(ev.keyCode == 27) gameStage = 2;
-    jumpStart();
+    else if(ev.keyCode==32) jumpStart();
+    
 }
 
 function reloadAmmo(){
@@ -453,7 +599,7 @@ for(var i=0;i<holesArray.length;i++){
 
 function hitDetected(){
             if(playerLifes==0){
-            console.log("GAME OVER!!!");
+                gameStage = 3;
         }else{
            if(mortal){
                playerLifes--;
