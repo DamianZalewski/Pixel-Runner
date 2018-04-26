@@ -14,6 +14,7 @@ var playerImage3 = new Image();
 playerImage3.src = "img/character3.png";
 var playerX = 200;
 var playerY = ch-200;
+var playerStartY = playerY;
 var playerWidth = 50;
 var playerHeight = 50;
 //player lifes variables
@@ -40,7 +41,7 @@ var playerAnimationTimer = 0;
 
 //----------------
 var jump = false;
-var jumpHigh = 50;
+var jumpHigh = 15;
 var jumpCounter = 0;
 var jumpSpeed = 5;
 //----------------
@@ -102,6 +103,7 @@ var stopMenuButtonHeight = 50;
 var stopMenuButtonX = stopMenuX + (stopMenuBackgroundWidth/2) - (stopMenuButtonWidth/2);
 var stopMenuButtonY = stopMenuY+stopMenuBackgroundHeight - 100;
 var stopButtonSpace = 100;
+var stopMenuAnimationY = -stopMenuBackgroundHeight;
 //----------------------------
 var gameOverMenuButtonWidth = 350;
 var gameOverMenuButtonHeight = 50;
@@ -174,7 +176,7 @@ function fullReset(){
  playerAnimationTimer = 0;
 //---------------
  jump = false;
- jumpHigh = 50;
+ jumpHigh = 15;
  jumpCounter = 0;
  jumpSpeed = 5;
 //--------------
@@ -204,6 +206,7 @@ function fullReset(){
  score=0;
  scoreIncreaseTime = 1000;
 //---------------  
+stopMenuAnimationY = -stopMenuBackgroundHeight;
 }
 
 
@@ -225,6 +228,7 @@ function stopMenuHandler(ev){
     document.removeEventListener("keydown",stopMenuHandler);
     document.removeEventListener("click",stopMenuHandler);
     canvas.addEventListener("click",shot,false);
+            stopMenuAnimationY  = -stopMenuBackgroundHeight;
             gameStage = 1;
             startIntervals();
         }
@@ -239,6 +243,7 @@ function stopMenuHandler(ev){
             gameStage = 0;
                 document.removeEventListener("keydown",stopMenuHandler);
     document.removeEventListener("click",stopMenuHandler);
+            stopMenuAnimationY  = -stopMenuBackgroundHeight;
             
         }
     else if (
@@ -254,13 +259,19 @@ function stopMenuHandler(ev){
     canvas.addEventListener("click",shot,false);
             gameStage = 1;
             startIntervals();
+        stopMenuAnimationY  = -stopMenuBackgroundHeight;
     }
       
 }
 
 function drawStopMenu(){
+    if(stopMenuAnimationY < stopMenuY) {
+        stopMenuAnimationY+=50;
+        drawLogic();
+        stopMenuButtonY = stopMenuAnimationY+stopMenuBackgroundHeight - 100;
+    }
     ctx.fillStyle = "yellow";
-    ctx.fillRect(stopMenuX,stopMenuY,stopMenuBackgroundWidth,stopMenuBackgroundHeight);
+    ctx.fillRect(stopMenuX,stopMenuAnimationY,stopMenuBackgroundWidth,stopMenuBackgroundHeight);
     ctx.fillStyle = "green";
     ctx.fillRect(stopMenuButtonX,stopMenuButtonY,stopMenuButtonWidth,stopMenuButtonHeight);
     ctx.fillStyle = "red";
@@ -310,8 +321,16 @@ function gameLogic(){
      tryHole();
      tryBird();
      gameBoard();
-     drawBackground();
      jumpHandler();
+     drawLogic();
+     update();
+     checkHoleCollision();
+     birdPlayerCollision();
+     birdBulletCollision();
+}
+
+function drawLogic(){
+      drawBackground();
      drawPlayer();
      drawFloor();
      drawHole();
@@ -320,12 +339,7 @@ function gameLogic(){
      drawBird();
      drawAmmo();
      drawScore();
-     update();
-     checkHoleCollision();
-     birdPlayerCollision();
-     birdBulletCollision();
 }
-
 
 //----------------------------
 function drawScore(){
@@ -491,7 +505,7 @@ function startIntervals(){
 
 function keyHandler(ev){
     if(ev.keyCode == 27) gameStage = 2;
-    else if(ev.keyCode==32) jumpStart();
+    else if(ev.keyCode==32) jumpStart(ev);
     
 }
 
@@ -501,12 +515,19 @@ function reloadAmmo(){
     }
 }
 
-function jumpStart(){
-    jump = true;
+function jumpStart(ev){
+      if(jumpHigh<50) jumpHigh+=5;
+     document.addEventListener("keyup",function(){
+         if(ev.keyCode==32) jump = true;
+    },false);
+        
+
 }
 
 function jumpHandler(){
-    
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   PLAYER SPADA POD EKRAN !!!!!!!!!!!!!!!!!!!!!!!!!!
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if(jump && jumpCounter<jumpHigh){
         playerY-=jumpSpeed;
         jumpCounter++;
@@ -523,6 +544,8 @@ function jumpHandler(){
         {
             jumpCounter = 0;
             jump = false;
+            jumpHigh = 15;
+            playerY = playerStartY;
         }
 }
 
