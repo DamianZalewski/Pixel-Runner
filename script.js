@@ -89,13 +89,29 @@ var scoreIncreaseTime = 1000;
 //----------------
 var gameStage  = 0;
 //----------------
+// mainMenuBackground
+var mainMenubackgroundImage = new Image();
+mainMenubackgroundImage.src = "img/mainMenuBackground.png"; 
+var mainMenuNewGameImage = new Image();
+mainMenuNewGameImage.src = "img/mainMenuNewGame.png"; 
+var mainMenuTopImage = new Image();
+mainMenuTopImage.src = "img/mainMenuTop.png"; 
+//---------------
 var mainMenubuttonWith = 400;
 var mainMenubuttonHeight = 100;
 var mainMenubuttonX = cw/2 - mainMenubuttonWith/2;
 var mainMenubuttonY = ch/2 - mainMenubuttonHeight*3;
+var mainMenuPlayerX = playerX;
+var mainMenuPlaterY = playerY;
 //-----------------
 var stopMenuBackgroundWidth = 500;
 var stopMenuBackgroundHeight = 300;
+var stopMenuBackgroundImage = new Image();
+stopMenuBackgroundImage.src = "img/stopMenuBackground.png"; 
+var stopMenuBackImage = new Image();
+stopMenuBackImage.src = "img/stopMenuBackButton.png"; 
+var stopMenuExitImage = new Image();
+stopMenuExitImage.src = "img/stopMenuExitButton.png"; 
 var stopMenuX = cw/2 - stopMenuBackgroundWidth/2;
 var stopMenuY = 100;
 var stopMenuButtonWidth = 300;
@@ -270,12 +286,9 @@ function drawStopMenu(){
         drawLogic();
         stopMenuButtonY = stopMenuAnimationY+stopMenuBackgroundHeight - 100;
     }
-    ctx.fillStyle = "yellow";
-    ctx.fillRect(stopMenuX,stopMenuAnimationY,stopMenuBackgroundWidth,stopMenuBackgroundHeight);
-    ctx.fillStyle = "green";
-    ctx.fillRect(stopMenuButtonX,stopMenuButtonY,stopMenuButtonWidth,stopMenuButtonHeight);
-    ctx.fillStyle = "red";
-    ctx.fillRect(stopMenuButtonX,stopMenuButtonY-stopButtonSpace,stopMenuButtonWidth,stopMenuButtonHeight);
+    ctx.drawImage(stopMenuBackgroundImage,stopMenuX,stopMenuAnimationY,stopMenuBackgroundWidth,stopMenuBackgroundHeight);
+    ctx.drawImage(stopMenuExitImage,stopMenuButtonX,stopMenuButtonY,stopMenuButtonWidth,stopMenuButtonHeight);
+    ctx.drawImage(stopMenuBackImage,stopMenuButtonX,stopMenuButtonY-stopButtonSpace,stopMenuButtonWidth,stopMenuButtonHeight);
 }
 
 //----------------------------
@@ -285,11 +298,10 @@ function mainMenu(){
     canvas.addEventListener("click",mainMenuListener,false);
 }
 function drawMainMenu(){
-    ctx.fillStyle = "rgb(23, 130, 222)";
-    ctx.fillRect(0,0,cw,ch);
-    ctx.fillStyle = "rgb(44, 168, 33)";
-    ctx.fillRect(mainMenubuttonX,mainMenubuttonY,mainMenubuttonWith,mainMenubuttonHeight);
-    ctx.fillRect(mainMenubuttonX,mainMenubuttonY+mainMenubuttonHeight*2,mainMenubuttonWith,mainMenubuttonHeight);   
+    ctx.drawImage(mainMenubackgroundImage,0,0,cw,ch);
+    ctx.drawImage(mainMenuNewGameImage,mainMenubuttonX,mainMenubuttonY,mainMenubuttonWith,mainMenubuttonHeight);
+    ctx.drawImage(mainMenuTopImage,mainMenubuttonX,mainMenubuttonY+mainMenubuttonHeight*2,mainMenubuttonWith,mainMenubuttonHeight);   
+    ctx.drawImage(mainMenuTopImage,mainMenubuttonX,mainMenubuttonY+mainMenubuttonHeight*2,mainMenubuttonWith,mainMenubuttonHeight);   
 }
 
 function mainMenuListener(ev){
