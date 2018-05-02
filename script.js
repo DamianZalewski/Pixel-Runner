@@ -41,9 +41,10 @@ var playerAnimationTimer = 0;
 
 //----------------
 var jump = false;
-var jumpHigh = 15;
+var jumpHigh = 100;
 var jumpCounter = 0;
 var jumpSpeed = 5;
+var jumpFall = false;
 //----------------
 var playerAnimationStage = 1;
 
@@ -192,9 +193,10 @@ function fullReset(){
  playerAnimationTimer = 0;
 //---------------
  jump = false;
- jumpHigh = 15;
+ jumpHigh = 100;
  jumpCounter = 0;
  jumpSpeed = 5;
+ jumpFall = false;
 //--------------
  playerAnimationStage = 1;
  floorY = playerY+playerHeight;
@@ -517,7 +519,7 @@ function startIntervals(){
 
 function keyHandler(ev){
     if(ev.keyCode == 27) gameStage = 2;
-    else if(ev.keyCode==32) jumpStart(ev);
+    else if(ev.keyCode==32 && !jump) jumpStart();
     
 }
 
@@ -527,38 +529,39 @@ function reloadAmmo(){
     }
 }
 
-function jumpStart(ev){
-      if(jumpHigh<50) jumpHigh+=5;
-     document.addEventListener("keyup",function(){
-         if(ev.keyCode==32) jump = true;
-    },false);
+function jumpStart(){
+    if(jumpHigh<300) jumpHigh +=10;
+    document.addEventListener("keyup",jumpTrue,false);       
         
+}
 
+function jumpTrue(){
+    jump = true;
+    document.removeEventListener("keyup",jumpTrue,false);
 }
 
 function jumpHandler(){
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   PLAYER SPADA POD EKRAN !!!!!!!!!!!!!!!!!!!!!!!!!!
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    if(jump && jumpCounter<jumpHigh){
-        playerY-=jumpSpeed;
-        jumpCounter++;
-        
-    }else
-        if(jump && jumpCounter<2*jumpHigh)
-            {
-         
-                playerY+=jumpSpeed;
-                jumpCounter++;
-            }
-    
-    if(jumpCounter>=2*jumpHigh)
-        {
-            jumpCounter = 0;
-            jump = false;
-            jumpHigh = 15;
-            playerY = playerStartY;
+    if(jump){
+        if(jumpCounter<=jumpHigh && !jumpFall){
+            jumpCounter+=jumpSpeed;
+            playerY -=jumpSpeed;
         }
+        else 
+            if(jumpCounter<=0) {
+                jumpFall = false;
+                jump = false;
+                jumpCounter = 0;
+                jumpHigh = 100;
+                jumpSpeed = 5;
+            }else{
+                jumpFall = true;
+                jumpCounter -=jumpSpeed;
+                playerY +=jumpSpeed;
+            }
+            
+        
+    }
+
 }
 
 // draw background black game board
