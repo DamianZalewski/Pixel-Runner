@@ -5,6 +5,7 @@ canvas.height = screen.height;
 var cw = canvas.width;
 var ch = canvas.height;
 // variables
+var level = 0;
 // player
 var playerImage1 = new Image();
 playerImage1.src = "img/character1.png";
@@ -126,7 +127,8 @@ var gameOverMenuButtonWidth = 350;
 var gameOverMenuButtonHeight = 50;
 var gameOverMenuButtonX = cw/2- gameOverMenuButtonWidth/2;
 var gameOverMenuButtonY = ch/2;
-
+var gameOverBackground = new Image();
+gameOverBackground.src = "img/deathBackground.png"; 
 //----------------------------
 // 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu  
 
@@ -134,9 +136,11 @@ var gameOverMenuButtonY = ch/2;
 
 // initial game logic 
  setInterval(game, 1000/60);
+
 var bulletInterval;
 var scoreInterval;
-
+var levelInterval;
+gameStage = 3;
  function game() {
      switch(gameStage){
          case 0 : mainMenu();
@@ -158,8 +162,8 @@ function gameOverMenu(){
     canvas.removeEventListener("click",shot);
     document.removeEventListener("keydown",keyHandler);
     ctx.fillStyle = "red";
-    ctx.fillRect(0,0,cw,ch);
-    ctx.fillStyle = "black";
+    ctx.drawImage(gameOverBackground,0,0,cw,ch);
+    ctx.fillStyle = "white";
     ctx.font = "50px arial";
     ctx.textAlign = "center";
     ctx.fillText("GAME OVER",cw/2,ch/2-200)
@@ -180,6 +184,10 @@ function gameOverMenuHandler(ev){
     fullReset();
     }
 }
+function gameLevel(){
+    level ++;
+}
+
 
 //--------------------------
 function fullReset(){
@@ -225,6 +233,7 @@ function fullReset(){
  scoreIncreaseTime = 1000;
 //---------------  
 stopMenuAnimationY = -stopMenuBackgroundHeight;
+level = 0;
 }
 
 
@@ -389,7 +398,7 @@ function drawBird(){
 
 function moveBird(){
     for(var i=0;i<birdXArray.length;i++){
-        birdXArray[i] -=10;
+        birdXArray[i] -=10+level;
         if(birdXArray[i]<=-100){
           birdXArray.splice(i,1);
           birdYArray.splice(i,1);
@@ -454,7 +463,7 @@ function shot(){
 }
 function shotMove(){
     for(var i=0;i<shotsXArray.length;i++){
-        shotsXArray[i] +=10;
+        shotsXArray[i] +=10+level;
         if(shotsXArray[i]>cw){
             shotsXArray.splice(i,1);
             shotsYArray.splice(i,1);
@@ -491,7 +500,7 @@ function drawAmmo(){
 }
 
 function update(){
-         backgroundX-=5;
+         backgroundX-=5+level;
      playerAnimationTimer++;
      bulletAnimationTimer++;
      moveHole();
@@ -508,11 +517,13 @@ startIntervals();
 }
 
 function stopIntervals(){
+    clearInterval(levelInterval);
     clearInterval(bulletInterval);
     clearInterval(scoreInterval);
 }
 
 function startIntervals(){
+      levelInterval = setInterval(gameLevel,15000);
       bulletInterval =   setInterval(reloadAmmo,shotAmmoReload);
       scoreInterval =  setInterval(changeScoreByTime,scoreIncreaseTime);
 }
@@ -545,6 +556,7 @@ function jumpHandler(){
         if(jumpCounter<=jumpHigh && !jumpFall){
             jumpCounter+=jumpSpeed;
             playerY -=jumpSpeed;
+   
         }
         else 
             if(jumpCounter<=0) {
@@ -557,6 +569,7 @@ function jumpHandler(){
                 jumpFall = true;
                 jumpCounter -=jumpSpeed;
                 playerY +=jumpSpeed;
+     
             }
             
         
@@ -614,7 +627,7 @@ function drawHole(){
 
 function moveHole(){
     for(var i=0;i<holesArray.length;i++){
-        holesArray[i] -=5;
+        holesArray[i] -=5+level;
         if(holesArray[i]<=-100){
           holesArray.splice(i,1);
             holesCounter--;
