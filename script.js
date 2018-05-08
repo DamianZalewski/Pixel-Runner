@@ -40,6 +40,8 @@ var backgroundHeight = ch;
 //----------------
 var playerAnimationTimer = 0;
 
+
+
 //----------------
 var jump = false;
 var jumpHigh = 100;
@@ -74,14 +76,22 @@ var stoneWidth = 40;
 var stoneHeight = 40;
 var stoneImage = new Image();
 stoneImage.src = "img/stone.png";
+var stoneY = floorY - stoneHeight;
 //-----------------
 //enemy ninja
 var ninjaCounter = 0;
 var ninjaXArray = [];
+var ninjaAnimationTimer = 0;
+var ninjaAnimationStage = 0;
 var ninjaWidth = 40;
 var ninjaHeight = 60;
-var ninjaImage = new Image();
-ninjaImage.src = "img/character1.png";
+var ninjaImage1 = new Image();
+ninjaImage1.src = "img/ninja1.png";
+var ninjaImage2 = new Image();
+ninjaImage2.src = "img/ninja2.png";
+var ninjaImage3 = new Image();
+ninjaImage3.src = "img/ninja3.png";
+var ninjaY = floorY - ninjaHeight;
 //----------------
 var shotsXArray = [];
 var shotsYArray = [];
@@ -242,6 +252,8 @@ stoneXArray = [];
         //----------------
 ninjaCounter = 0;
 ninjaXArray = [];
+
+ninjaAnimationTimer = 0;
     //--------------
  shotsXArray = [];
  shotsYArray = [];
@@ -486,7 +498,7 @@ function tryStone(){
 }
 function drawStone(){
     for(var i = 0;i<stoneXArray.length;i++){
-        ctx.drawImage(stoneImage,stoneXArray[i],floorY-stoneHeight,stoneWidth,stoneHeight);
+        ctx.drawImage(stoneImage,stoneXArray[i],stoneY,stoneWidth,stoneHeight);
     }
 }
 
@@ -504,8 +516,8 @@ function stonePlayerCollision(){
     for(var i=0;i<stoneXArray.length;i++){
     if (playerX < stoneXArray[i] + stoneWidth &&
    playerX + playerWidth > stoneXArray[i] &&
-   playerY < floorY &&
-   playerHeight + playerY > floorY-stoneHeight) {
+   playerY < stoneY + stoneHeight &&
+   playerHeight + playerY > stoneY ) {
     hitDetected();
 }
     }
@@ -515,18 +527,34 @@ function stonePlayerCollision(){
 function tryNinja(){
         if((Math.floor(Math.random()*200    )+1)==1){
         ninjaXArray[ninjaCounter] = cw+ninjaWidth;
+
         ninjaCounter++;
     }
 }
 function drawNinja(){
     for(var i = 0;i<ninjaXArray.length;i++){
-        ctx.drawImage(ninjaImage,ninjaXArray[i],floorY-ninjaHeight,ninjaWidth,ninjaHeight);
+       
+        
+        switch(ninjaAnimationStage){
+        case 0: ctx.drawImage(ninjaImage1,ninjaXArray[i],ninjaY,ninjaWidth,ninjaHeight);
+            break;
+        case 1: ctx.drawImage(ninjaImage2,ninjaXArray[i],ninjaY,ninjaWidth,ninjaHeight);
+            break;
+        case 2: ctx.drawImage(ninjaImage3,ninjaXArray[i],ninjaY,ninjaWidth,ninjaHeight);
+            break;
     }
+         } 
+    if(ninjaAnimationTimer==3) {
+        ninjaAnimationStage++;
+        ninjaAnimationTimer = 0;
+    }
+    if(ninjaAnimationStage>2) ninjaAnimationStage = 0;
+    
 }
 
 function moveNinja(){
     for(var i=0;i<ninjaXArray.length;i++){
-        ninjaXArray[i] -=25+level;
+        ninjaXArray[i] -=25;
         if(ninjaXArray[i]<=-100){
           ninjaXArray.splice(i,1);  
         ninjaCounter--;
@@ -538,8 +566,8 @@ function ninjaPlayerCollision(){
     for(var i=0;i<ninjaXArray.length;i++){
         if (playerX < ninjaXArray[i] + ninjaWidth &&
        playerX + playerWidth > ninjaXArray[i] &&
-       playerY < floorY &&
-   playerHeight + playerY > floorY-ninjaHeight) {
+       playerY < ninjaY + ninjaHeight &&
+   playerHeight + playerY > ninjaY) {
     hitDetected();
 }
     }
@@ -550,9 +578,8 @@ function ninjaBulletCollision(){
         for(var j=0;j<ninjaXArray.length;j++){         
     if (shotsXArray[i] < ninjaXArray[j] + ninjaWidth &&
    shotsXArray[i] + shotWidth > ninjaXArray[j] &&
-   shotsYArray[i] < floorY - ninjaHeight  &&
-   shotHeight + shotsYArray[i] > floorY) {
-        alert("kek");
+   shotsYArray[i] < ninjaY + ninjaHeight &&
+   shotHeight + shotsYArray[i] > ninjaY) {
             //destroy ninja and bullet
         ninjaXArray[j] = -100;
         shotsXArray[i] = cw;
@@ -619,6 +646,7 @@ function update(){
          backgroundX-=5+level;
      playerAnimationTimer++;
      bulletAnimationTimer++;
+     ninjaAnimationTimer++
    //  moveHole();
      moveBird();
     moveStone();
