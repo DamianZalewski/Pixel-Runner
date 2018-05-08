@@ -44,16 +44,18 @@ var playerAnimationTimer = 0;
 var jump = false;
 var jumpHigh = 100;
 var jumpCounter = 0;
-var jumpSpeed = 5;
+var jumpSpeed = 10;
 var jumpFall = false;
 //----------------
 var playerAnimationStage = 1;
 
 var floorY = playerY+playerHeight;
 //------------
+/*
 var holesCounter = 0;
 var holesArray = [];
 var holeWidth = 50;
+*/
 //-----------------
 var birdsCounter = 0;
 var birdXArray = [];
@@ -65,6 +67,22 @@ birdImage.src = "img/bird.png";
 var swingCounter = 0;
 var swingBool = false;
 //-----------------
+//-----------------
+var stoneCounter = 0;
+var stoneXArray = [];
+var stoneWidth = 40;
+var stoneHeight = 40;
+var stoneImage = new Image();
+stoneImage.src = "img/stone.png";
+//-----------------
+//enemy ninja
+var ninjaCounter = 0;
+var ninjaXArray = [];
+var ninjaWidth = 40;
+var ninjaHeight = 60;
+var ninjaImage = new Image();
+ninjaImage.src = "img/character1.png";
+//----------------
 var shotsXArray = [];
 var shotsYArray = [];
 var shotWidth = 30;
@@ -102,9 +120,7 @@ mainMenuTopImage.src = "img/mainMenuTop.png";
 var mainMenubuttonWith = 400;
 var mainMenubuttonHeight = 100;
 var mainMenubuttonX = cw/2 - mainMenubuttonWith/2;
-var mainMenubuttonY = ch/2 - mainMenubuttonHeight*3;
-var mainMenuPlayerX = playerX;
-var mainMenuPlaterY = playerY;
+var mainMenubuttonY = ch/2 - mainMenubuttonHeight*2 ;
 //-----------------
 var stopMenuBackgroundWidth = 500;
 var stopMenuBackgroundHeight = 300;
@@ -140,7 +156,7 @@ gameOverBackground.src = "img/deathBackground.png";
 var bulletInterval;
 var scoreInterval;
 var levelInterval;
-gameStage = 3;
+
  function game() {
      switch(gameStage){
          case 0 : mainMenu();
@@ -203,14 +219,16 @@ function fullReset(){
  jump = false;
  jumpHigh = 100;
  jumpCounter = 0;
- jumpSpeed = 5;
+ jumpSpeed = 10;
  jumpFall = false;
 //--------------
  playerAnimationStage = 1;
  floorY = playerY+playerHeight;
 //-----------
+    /*
  holesCounter = 0;
  holesArray = [];
+    */
 //----------------
  birdsCounter = 0;
  birdXArray = [];
@@ -218,6 +236,13 @@ function fullReset(){
  swingCounter = 0;
  swingBool = false;
 //----------------
+    //----------------
+stoneCounter = 0;
+stoneXArray = [];
+        //----------------
+ninjaCounter = 0;
+ninjaXArray = [];
+    //--------------
  shotsXArray = [];
  shotsYArray = [];
  shotY = playerY + playerHeight/2;
@@ -341,25 +366,33 @@ function mainMenuListener(ev){
 
 //----------------------------
 function gameLogic(){
-     tryHole();
+   //  tryHole();
      tryBird();
+     tryStone();
+     tryNinja();
      gameBoard();
      jumpHandler();
      drawLogic();
      update();
-     checkHoleCollision();
+     // checkHoleCollision();
      birdPlayerCollision();
+     stonePlayerCollision();
+     ninjaPlayerCollision();
+     
      birdBulletCollision();
+     ninjaBulletCollision();  //!!!!!!!!!!!!!!!!!!!!!!!!!!! NIE DZIALA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
 
 function drawLogic(){
       drawBackground();
      drawPlayer();
      drawFloor();
-     drawHole();
+    // drawHole();
      drawShot();
      drawlifes();
+    drawStone();
      drawBird();
+    drawNinja();
      drawAmmo();
      drawScore();
 }
@@ -398,7 +431,7 @@ function drawBird(){
 
 function moveBird(){
     for(var i=0;i<birdXArray.length;i++){
-        birdXArray[i] -=10+level;
+        birdXArray[i] -=15+level;
         if(birdXArray[i]<=-100){
           birdXArray.splice(i,1);
           birdYArray.splice(i,1);
@@ -444,7 +477,90 @@ function birdBulletCollision(){
 }
 
 //-----------------------------
+// stone functions
+function tryStone(){
+        if((Math.floor(Math.random()*200    )+1)==1){
+        stoneXArray[stoneCounter] = cw+stoneWidth;
+        stoneCounter++;
+    }
+}
+function drawStone(){
+    for(var i = 0;i<stoneXArray.length;i++){
+        ctx.drawImage(stoneImage,stoneXArray[i],floorY-stoneHeight,stoneWidth,stoneHeight);
+    }
+}
 
+function moveStone(){
+    for(var i=0;i<stoneXArray.length;i++){
+        stoneXArray[i] -=10+level;
+        if(stoneXArray[i]<=-100){
+          stoneXArray.splice(i,1);  
+        stoneCounter--;
+        }
+    }
+}
+
+function stonePlayerCollision(){
+    for(var i=0;i<stoneXArray.length;i++){
+    if (playerX < stoneXArray[i] + stoneWidth &&
+   playerX + playerWidth > stoneXArray[i] &&
+   playerY < floorY &&
+   playerHeight + playerY > floorY-stoneHeight) {
+    hitDetected();
+}
+    }
+}
+//-----------------------------
+// ninja functions
+function tryNinja(){
+        if((Math.floor(Math.random()*200    )+1)==1){
+        ninjaXArray[ninjaCounter] = cw+ninjaWidth;
+        ninjaCounter++;
+    }
+}
+function drawNinja(){
+    for(var i = 0;i<ninjaXArray.length;i++){
+        ctx.drawImage(ninjaImage,ninjaXArray[i],floorY-ninjaHeight,ninjaWidth,ninjaHeight);
+    }
+}
+
+function moveNinja(){
+    for(var i=0;i<ninjaXArray.length;i++){
+        ninjaXArray[i] -=25+level;
+        if(ninjaXArray[i]<=-100){
+          ninjaXArray.splice(i,1);  
+        ninjaCounter--;
+        }
+    }
+}
+
+function ninjaPlayerCollision(){
+    for(var i=0;i<ninjaXArray.length;i++){
+        if (playerX < ninjaXArray[i] + ninjaWidth &&
+       playerX + playerWidth > ninjaXArray[i] &&
+       playerY < floorY &&
+   playerHeight + playerY > floorY-ninjaHeight) {
+    hitDetected();
+}
+    }
+}
+
+function ninjaBulletCollision(){
+    for(var i=0;i<shotsXArray.length;i++){
+        for(var j=0;j<ninjaXArray.length;j++){         
+    if (shotsXArray[i] < ninjaXArray[j] + ninjaWidth &&
+   shotsXArray[i] + shotWidth > ninjaXArray[j] &&
+   shotsYArray[i] < floorY - ninjaHeight  &&
+   shotHeight + shotsYArray[i] > floorY) {
+        alert("kek");
+            //destroy ninja and bullet
+        ninjaXArray[j] = -100;
+        shotsXArray[i] = cw;
+        changeScoreByEvent();
+}}
+    }
+}
+//-----------------------------
 function drawlifes(){
     // 1.show how many lifes player have
     for(var i=0;i<playerLifes;i++){
@@ -503,8 +619,10 @@ function update(){
          backgroundX-=5+level;
      playerAnimationTimer++;
      bulletAnimationTimer++;
-     moveHole();
+   //  moveHole();
      moveBird();
+    moveStone();
+    moveNinja();
      shotMove();
      birdSwing();
 }
@@ -564,7 +682,7 @@ function jumpHandler(){
                 jump = false;
                 jumpCounter = 0;
                 jumpHigh = 100;
-                jumpSpeed = 5;
+                jumpSpeed = 10;
             }else{
                 jumpFall = true;
                 jumpCounter -=jumpSpeed;
@@ -611,6 +729,7 @@ function drawFloor(){
     ctx.fillStyle = "green";
      ctx.fillRect(0,floorY,cw,ch-floorY);
 }
+/*
 function tryHole(){
         if((Math.floor(Math.random()*100)+1)==1){
     
@@ -647,7 +766,7 @@ for(var i=0;i<holesArray.length;i++){
     } 
 }
 }
-
+*/
 function hitDetected(){
             if(playerLifes==0){
                 gameStage = 3;
