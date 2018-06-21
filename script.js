@@ -16,22 +16,24 @@ playerImage3.src = "img/character3.png";
 var playerX = 200;
 var playerY = ch - 200;
 var playerStartY = playerY;
-var playerWidth = 50;
-var playerHeight = 50;
+var playerWidth = 55;
+var playerHeight = 55;
 //player lifes variables
 var playerLifes = 3;
 var playerLifesImage = new Image();
 playerLifesImage.src = "img/playerLife.png"
 var playerLifeX = 30;
 var playerLifeY = 30;
-var playerLifeWidth = 30;
-var playerLifeHeight = 30;
+var playerLifeWidth = 50;
+var playerLifeHeight = 50;
 var playerLifeSpace = 20 + playerLifeWidth;
 var mortal = true;
 
 // background
 var backgroundImage = new Image();
 backgroundImage.src = "img/background.png";
+var backgroundImage2 = new Image();
+backgroundImage2.src = "img/gameBackground2.png";
 var backgroundX = 0;
 var backgroundY = 0;
 var backgroundWidth = cw;
@@ -122,6 +124,8 @@ var gameStage = 0;
 // mainMenuBackground
 var mainMenubackgroundImage = new Image();
 mainMenubackgroundImage.src = "img/mainMenuBackground.png";
+var mainMenubackgroundImage2 = new Image();
+mainMenubackgroundImage2.src = "img/mainMenuBackground2.png";
 var mainMenuNewGameImage = new Image();
 mainMenuNewGameImage.src = "img/mainMenuNewGame.png";
 var mainMenuTopImage = new Image();
@@ -156,7 +160,7 @@ var gameOverMenuButtonY = ch / 2;
 var gameOverBackground = new Image();
 gameOverBackground.src = "img/deathBackground.png";
 //----------------------------
-// 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu  
+// 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu   4- instruction screen
 
 
 
@@ -181,10 +185,36 @@ function game() {
         case 3:
             gameOverMenu();
             break;
+        case 4:
+            instructionScreen();
+            break;
     }
 
 }
 //-------------------------
+function instructionScreen() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.fillStyle = "white";
+    ctx.font = "50px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("NINJA RUNNER", cw / 2, 100);
+    ctx.fillText("TUTORIAL", cw / 2, 170);
+    ctx.fillStyle = "red";
+    ctx.fillText("--------------------------", cw / 2, 210);
+    ctx.fillStyle = "white";
+    ctx.fillText("Press 'SPACE' to jump.", cw / 2, 270);
+    ctx.fillText("Click 'LPM' to attack.", cw / 2, 340);
+    ctx.fillText("Press any key  to play", cw / 2, ch - 300);
+    document.addEventListener("keyup", instructionHandler);
+
+}
+
+function instructionHandler() {
+    document.removeEventListener("keyup", instructionHandler);
+    gameStage = 1;
+}
+
 function gameOverMenu() {
     stopIntervals();
     document.addEventListener("click", gameOverMenuHandler);
@@ -348,7 +378,11 @@ function mainMenu() {
 }
 
 function drawMainMenu() {
-    ctx.drawImage(mainMenubackgroundImage, 0, 0, cw, ch);
+    if (Math.floor((Math.random() * 100) + 1) % 22 == 0)
+        ctx.drawImage(mainMenubackgroundImage2, 0, 0, cw, ch);
+    else
+        ctx.drawImage(mainMenubackgroundImage, 0, 0, cw, ch);
+
     ctx.drawImage(mainMenuNewGameImage, mainMenubuttonX, mainMenubuttonY, mainMenubuttonWith, mainMenubuttonHeight);
     ctx.drawImage(mainMenuTopImage, mainMenubuttonX, mainMenubuttonY + mainMenubuttonHeight * 2, mainMenubuttonWith, mainMenubuttonHeight);
     ctx.drawImage(mainMenuTopImage, mainMenubuttonX, mainMenubuttonY + mainMenubuttonHeight * 2, mainMenubuttonWith, mainMenubuttonHeight);
@@ -364,7 +398,7 @@ function mainMenuListener(ev) {
     ) {
         init();
         canvas.removeEventListener("click", mainMenuListener);
-        gameStage = 1;
+        gameStage = 4;
     } else if (
         ev.clientY >= mainMenubuttonY + 2 * mainMenubuttonHeight &&
         ev.clientY <= mainMenubuttonY + 3 * mainMenubuttonHeight &&
@@ -766,8 +800,9 @@ function drawPlayer() {
 
 function drawBackground() {
     ctx.drawImage(backgroundImage, backgroundX, backgroundY, backgroundWidth, backgroundHeight);
-    ctx.drawImage(backgroundImage, backgroundX + backgroundWidth, backgroundY, backgroundWidth, backgroundHeight);
-    if (backgroundX < -backgroundWidth) backgroundX = 0;
+    ctx.drawImage(backgroundImage2, backgroundX + backgroundWidth, backgroundY, backgroundWidth, backgroundHeight);
+    ctx.drawImage(backgroundImage, backgroundX + 2 * backgroundWidth, backgroundY, backgroundWidth, backgroundHeight);
+    if (backgroundX < -2 * backgroundWidth) backgroundX = 0;
 }
 
 function drawFloor() {
