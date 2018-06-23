@@ -160,6 +160,11 @@ var gameOverMenuButtonY = ch / 2;
 var gameOverBackground = new Image();
 gameOverBackground.src = "img/deathBackground.png";
 //----------------------------
+var changeStateAnimationCount = cw*1.5;
+var changeStateAnimationImage = new Image();
+changeStateAnimationImage.src = "img/changeAnimation.png";
+var stateI;
+//----------------------------
 // 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu   4- instruction screen
 
 
@@ -170,6 +175,41 @@ setInterval(game, 1000 / 60);
 var bulletInterval;
 var scoreInterval;
 var levelInterval;
+
+function changeGameState(i){
+    stateI = i;
+    gameStage = 5;
+    if(changeStateAnimationCount<-cw*2){
+           gameStage = stateI; 
+         changeStateAnimationCount = cw*1.5;
+
+    }else{ 
+    if(changeStateAnimationCount <= -0.5*cw)
+    switch (stateI) {
+        case 0:
+            drawMainMenu();
+            break;
+        case 1:
+            drawBackground();
+            drawPlayer();
+            drawlifes();
+            drawAmmo();
+            drawScore();
+            break;
+        case 3:
+            gameOverMenu();
+            break;
+        case 4:
+            instructionScreen();
+            break;
+    }  
+    ctx.drawImage(changeStateAnimationImage, changeStateAnimationCount, 0, cw*1.5, ch);
+    changeStateAnimationCount -=100;
+  
+       
+    }
+
+}
 
 function game() {
     switch (gameStage) {
@@ -188,6 +228,8 @@ function game() {
         case 4:
             instructionScreen();
             break;
+        case 5:
+            changeGameState(stateI);
     }
 
 }
@@ -212,7 +254,7 @@ function instructionScreen() {
 
 function instructionHandler() {
     document.removeEventListener("keyup", instructionHandler);
-    gameStage = 1;
+    changeGameState(1);
 }
 
 function gameOverMenu() {
@@ -238,7 +280,7 @@ function gameOverMenuHandler(ev) {
         ev.clientX >= gameOverMenuButtonX &&
         ev.clientX <= gameOverMenuButtonX + gameOverMenuButtonWidth
     ) {
-        gameStage = 0;
+        changeGameState(0);
         document.removeEventListener("click", gameOverMenuHandler);
         fullReset();
     }
@@ -326,6 +368,7 @@ function stopMenuHandler(ev) {
         document.removeEventListener("click", stopMenuHandler);
         canvas.addEventListener("click", shot, false);
         stopMenuAnimationY = -stopMenuBackgroundHeight;
+
         gameStage = 1;
         startIntervals();
     } else if (
@@ -336,7 +379,8 @@ function stopMenuHandler(ev) {
     ) {
         // button nr 2 / exit
         fullReset();
-        gameStage = 0;
+ 
+        changeGameState(0);
         document.removeEventListener("keydown", stopMenuHandler);
         document.removeEventListener("click", stopMenuHandler);
         stopMenuAnimationY = -stopMenuBackgroundHeight;
@@ -398,7 +442,7 @@ function mainMenuListener(ev) {
     ) {
         init();
         canvas.removeEventListener("click", mainMenuListener);
-        gameStage = 4;
+        changeGameState(4);
     } else if (
         ev.clientY >= mainMenubuttonY + 2 * mainMenubuttonHeight &&
         ev.clientY <= mainMenubuttonY + 3 * mainMenubuttonHeight &&
@@ -849,7 +893,7 @@ for(var i=0;i<holesArray.length;i++){
 */
 function hitDetected() {
     if (playerLifes == 0) {
-        gameStage = 3;
+        changeGameState(3);
     } else {
         if (mortal) {
             playerLifes--;
