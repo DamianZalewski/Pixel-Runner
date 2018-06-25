@@ -165,6 +165,10 @@ var changeStateAnimationImage = new Image();
 changeStateAnimationImage.src = "img/changeAnimation.png";
 var stateI;
 //----------------------------
+var topListBackgroundImage = new Image();
+topListBackgroundImage.src = "img/stopMenuBackground.png";
+var topListWidth = 400;
+var topListHeight = 600;
 // 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu   4- instruction screen
 
 
@@ -202,6 +206,7 @@ function changeGameState(i){
         case 4:
             instructionScreen();
             break;
+
     }  
     ctx.drawImage(changeStateAnimationImage, changeStateAnimationCount, 0, cw*1.5, ch);
     changeStateAnimationCount -=100;
@@ -230,6 +235,10 @@ function game() {
             break;
         case 5:
             changeGameState(stateI);
+            break;
+        case 6:
+            topList();
+            break;
     }
 
 }
@@ -449,10 +458,26 @@ function mainMenuListener(ev) {
         ev.clientX >= mainMenubuttonX &&
         ev.clientX <= mainMenubuttonX + mainMenubuttonWith
     ) {
-        alert("top list");
+        gameStage = 6;
         canvas.removeEventListener("click", mainMenuListener);
         // ---------------- write functions for top lists !-----------------------
     }
+}
+
+function topList(){
+    drawTopList();
+    document.addEventListener("keyup",topListController);
+    document.addEventListener("click",topListController);
+}
+
+function topListController(ev){
+    document.removeEventListener("keyup",topListController);
+    document.removeEventListener("click",topListController);
+    gameStage = 0;
+}
+
+function drawTopList(){
+    ctx.drawImage(topListBackgroundImage, cw/2-topListWidth/2, 100, topListWidth, topListHeight);
 }
 
 //----------------------------
