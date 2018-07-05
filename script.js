@@ -169,6 +169,8 @@ var topListBackgroundImage = new Image();
 topListBackgroundImage.src = "img/stopMenuBackground.png";
 var topListWidth = 400;
 var topListHeight = 600;
+//---------------------------------
+var allowJump = false;
 // 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu   4- instruction screen
 
 
@@ -194,6 +196,7 @@ function changeGameState(i){
             drawMainMenu();
             break;
         case 1:
+            setTimeout(function(){allowJump = true},500);
             drawBackground();
             drawPlayer();
             drawlifes();
@@ -258,13 +261,14 @@ function instructionScreen() {
     ctx.fillText("Click 'LPM' to attack.", cw / 2, 340);
     ctx.fillText("Press any key  to play", cw / 2, ch - 300);
     document.addEventListener("keyup", instructionHandler);
-
+    
 }
 
 function instructionHandler() {
     document.removeEventListener("keyup", instructionHandler);
     changeGameState(1);
 }
+
 
 function gameOverMenu() {
     stopIntervals();
@@ -356,6 +360,8 @@ function fullReset() {
     //---------------  
     stopMenuAnimationY = -stopMenuBackgroundHeight;
     level = 0;
+    //-----------------
+    allowJump = false;
 }
 
 
@@ -482,6 +488,7 @@ function drawTopList(){
 
 //----------------------------
 function gameLogic() {
+    if(playerLifes==0) changeGameState(3);
     //  tryHole();
     tryBird();
     tryStone();
@@ -790,9 +797,10 @@ function startIntervals() {
 }
 
 function keyHandler(ev) {
+    if(allowJump){ 
     if (ev.keyCode == 27) gameStage = 2;
     else if (ev.keyCode == 32 && !jump) jumpStart();
-
+    }
 }
 
 function reloadAmmo() {
