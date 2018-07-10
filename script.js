@@ -483,7 +483,23 @@ function topListController(ev){
 }
 
 function drawTopList(){
-    ctx.drawImage(topListBackgroundImage, cw/2-topListWidth/2, 100, topListWidth, topListHeight);
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.fillStyle = "white";
+    ctx.font = "50px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("TOP LIST", cw / 2, 100);
+    ctx.fillStyle = "red";
+    ctx.fillText("--------------------------", cw / 2, 140);
+    ctx.fillStyle = "white";
+    ctx.font = "30px Arial";
+    ctx.fillText("1. NAME : -------   SCORE : -------", cw / 2, 190);
+    ctx.fillText("2. NAME : -------   SCORE : -------", cw / 2, 230);
+    ctx.fillText("3. NAME : -------   SCORE : -------", cw / 2, 270);
+    ctx.fillText("4. NAME : -------   SCORE : -------", cw / 2, 310);
+    ctx.fillText("5. NAME : -------   SCORE : -------", cw / 2, 350);
+    ctx.fillText("Press any key to return", cw / 2, 450);
+    
 }
 
 //----------------------------
