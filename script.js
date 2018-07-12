@@ -283,7 +283,21 @@ function gameOverMenu() {
     ctx.fillText("GAME OVER", cw / 2, ch / 2 - 200)
     ctx.fillText("Score: " + score, cw / 2, ch / 2 - 150);
     ctx.fillRect(gameOverMenuButtonX, gameOverMenuButtonY, gameOverMenuButtonWidth, gameOverMenuButtonHeight);
+    checkTopList(score);
+}
 
+function checkTopList(score){
+    var values = [],
+    keys = Object.keys(localStorage),
+    i = keys.length;
+
+    while ( i-- ) {
+        values.push( localStorage.getItem(keys[i]) );
+    }
+    if(values.length<5) localStorage.setItem(localStorage.length,score);
+    for(var i = 0;i<values;i++) null;
+    console.log(values);
+    
 }
 
 function gameOverMenuHandler(ev) {
