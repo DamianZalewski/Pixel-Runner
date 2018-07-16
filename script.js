@@ -134,7 +134,7 @@ mainMenuTopImage.src = "img/mainMenuTop.png";
 var mainMenubuttonWith = 400;
 var mainMenubuttonHeight = 100;
 var mainMenubuttonX = cw / 2 - mainMenubuttonWith / 2;
-var mainMenubuttonY = ch / 2 - mainMenubuttonHeight * 2;
+var mainMenubuttonY = ch / 2 - mainMenubuttonHeight * 2 + 50;
 //-----------------
 var stopMenuBackgroundWidth = 500;
 var stopMenuBackgroundHeight = 300;
@@ -170,7 +170,12 @@ topListBackgroundImage.src = "img/stopMenuBackground.png";
 var topListWidth = 400;
 var topListHeight = 600;
 //---------------------------------
+var pickNameBool = true;
+var playerName = "-----";
+var playerIndex = 0;
+//---------------------------------
 var allowJump = false;
+var checkTopListBool = true;
 // 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu   4- instruction screen
 
 
@@ -242,6 +247,8 @@ function game() {
         case 6:
             topList();
             break;
+        case 7:
+            drawPickName();
     }
 
 }
@@ -275,29 +282,69 @@ function gameOverMenu() {
     document.addEventListener("click", gameOverMenuHandler);
     canvas.removeEventListener("click", shot);
     document.removeEventListener("keydown", keyHandler);
-    ctx.fillStyle = "red";
-    ctx.drawImage(gameOverBackground, 0, 0, cw, ch);
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, cw, ch);
     ctx.font = "50px arial";
     ctx.textAlign = "center";
-    ctx.fillText("GAME OVER", cw / 2, ch / 2 - 200)
+    ctx.fillStyle = "red";
+    ctx.fillText("GAME OVER", cw / 2, ch / 2 - 200);
+    ctx.fillStyle = "white";
     ctx.fillText("Score: " + score, cw / 2, ch / 2 - 150);
     ctx.fillRect(gameOverMenuButtonX, gameOverMenuButtonY, gameOverMenuButtonWidth, gameOverMenuButtonHeight);
-    checkTopList(score);
+    if (checkTopListBool) checkTopList(score);
 }
 
 function checkTopList(score){
-    var values = [],
-    keys = Object.keys(localStorage),
-    i = keys.length;
-
-    while ( i-- ) {
-        values.push( localStorage.getItem(keys[i]) );
-    }
-    if(values.length<5) localStorage.setItem(localStorage.length,score);
-    for(var i = 0;i<values;i++) null;
-    console.log(values);
+    checkTopListBool = false;
+    var values = [0,0,0,0,0];
     
+    for(var i = 0;i<5;i++){
+        values[i] = localStorage.getItem(i);
+    }
+    
+    if(score>values[4]){
+        values[4] = score;
+        gameStage = 7;
+    }
+       gameStage = 7;
+    values.sort(function(a, b){return b-a});
+        for(var i = 0;i<5;i++){
+        localStorage.setItem(i,values[i]);
+    }
+    
+    for(var i = 0;i<5;i++){
+        console.log("localStorage "+localStorage.getItem(i));
+        console.log("values "+values[i]);
+    }
+}
+
+function drawPickName(){
+    document.addEventListener("keyup", pickNameHandler);
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.font = "50px arial";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "red";
+    ctx.fillText("GAME OVER", cw / 2, ch / 2 - 200);
+    ctx.fillStyle = "white";
+    ctx.fillText("Score: " + score, cw / 2, ch / 2 - 150);
+    ctx.fillText("NEW RECORD!", cw / 2, 350);
+    
+    ctx.fillText(playerName, cw / 2, 450);
+
+    
+}
+
+function pickNameHandler(ev){
+    if(
+        ((ev.keyCode >= 48 && ev.keyCode <= 57) ||
+        (ev.keyCode >= 65 && ev.keyCode <= 90))
+    )
+        {
+            playerName.replaceAt(playerIndex+1,String.fromCharCode(ev.keyCode));
+            playerIndex++;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FIX BUG
+        }
+
 }
 
 function gameOverMenuHandler(ev) {
@@ -376,6 +423,9 @@ function fullReset() {
     level = 0;
     //-----------------
     allowJump = false;
+    pickNameBool = true;
+    playerName = "-----";
+    playerIndex = 0;
 }
 
 
@@ -447,6 +497,7 @@ function drawStopMenu() {
 function mainMenu() {
     stopIntervals();
     drawMainMenu();
+    checkTopListBool = true;
     canvas.addEventListener("click", mainMenuListener, false);
 }
 
@@ -507,11 +558,16 @@ function drawTopList(){
     ctx.fillText("--------------------------", cw / 2, 140);
     ctx.fillStyle = "white";
     ctx.font = "30px Arial";
-    ctx.fillText("1. NAME : -------   SCORE : -------", cw / 2, 190);
-    ctx.fillText("2. NAME : -------   SCORE : -------", cw / 2, 230);
-    ctx.fillText("3. NAME : -------   SCORE : -------", cw / 2, 270);
-    ctx.fillText("4. NAME : -------   SCORE : -------", cw / 2, 310);
-    ctx.fillText("5. NAME : -------   SCORE : -------", cw / 2, 350);
+    
+    for(var i = 0;i<5;i++){
+        if(localStorage.getItem(i) != 0) {
+              let name = i;
+              let score = localStorage.getItem(i);
+              ctx.fillText("1. NAME : "+name+" " + "SCORE : "+score, cw / 2, 190+i*40);
+        }else{
+                ctx.fillText("2. NAME : -------   SCORE : -------", cw / 2, 190+i*40);
+        }
+    }
     ctx.fillText("Press any key to return", cw / 2, 450);
     
 }
