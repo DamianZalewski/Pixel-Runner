@@ -171,7 +171,8 @@ var topListWidth = 400;
 var topListHeight = 600;
 //---------------------------------
 var pickNameBool = true;
-var playerName = "-----";
+var playerName = new Array(5);
+playerName = ['-','-','-','-','-'];
 var playerIndex = 0;
 //---------------------------------
 var allowJump = false;
@@ -329,8 +330,10 @@ function drawPickName(){
     ctx.fillStyle = "white";
     ctx.fillText("Score: " + score, cw / 2, ch / 2 - 150);
     ctx.fillText("NEW RECORD!", cw / 2, 350);
+    var name = "";
+    for(var i = 0;i<5;i++) name += playerName[i];
     
-    ctx.fillText(playerName, cw / 2, 450);
+    ctx.fillText(name, cw / 2, 450);
 
     
 }
@@ -338,12 +341,17 @@ function drawPickName(){
 function pickNameHandler(ev){
     if(
         ((ev.keyCode >= 48 && ev.keyCode <= 57) ||
-        (ev.keyCode >= 65 && ev.keyCode <= 90))
+        (ev.keyCode >= 65 && ev.keyCode <= 90)) &&
+        playerIndex < 5
     )
         {
-            playerName.replaceAt(playerIndex+1,String.fromCharCode(ev.keyCode));
-            playerIndex++;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FIX BUG
+            playerName[playerIndex] = String.fromCharCode(ev.keyCode);
+            playerIndex++;
         }
+    else if(ev.keyCode == 8) {
+        playerIndex--;
+        playerName[playerIndex] = '-';
+    }
 
 }
 
@@ -424,7 +432,7 @@ function fullReset() {
     //-----------------
     allowJump = false;
     pickNameBool = true;
-    playerName = "-----";
+    playerName = ['-','-','-','-','-'];
     playerIndex = 0;
 }
 
