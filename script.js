@@ -177,6 +177,7 @@ var playerIndex = 0;
 //---------------------------------
 var allowJump = false;
 var checkTopListBool = true;
+var pickColor = 'red';
 // 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu   4- instruction screen
 
 
@@ -307,7 +308,6 @@ function checkTopList(score){
         values[4] = score;
         gameStage = 7;
     }
-       gameStage = 7;
     values.sort(function(a, b){return b-a});
         for(var i = 0;i<5;i++){
         localStorage.setItem(i,values[i]);
@@ -329,13 +329,34 @@ function drawPickName(){
     ctx.fillText("GAME OVER", cw / 2, ch / 2 - 200);
     ctx.fillStyle = "white";
     ctx.fillText("Score: " + score, cw / 2, ch / 2 - 150);
+    
+    ctx.fillStyle  = pickColor;
     ctx.fillText("NEW RECORD!", cw / 2, 350);
+    switch(pickColor){
+        case 'red': pickColor = 'orange';
+            break;
+        case 'orange' : pickColor = 'gray';
+            break;
+        case 'gray' : pickColor = 'yellow';
+            break;
+        case 'yellow' : pickColor = 'darkgray';
+            break;
+        case 'darkgray' : pickColor = 'white';
+            break;
+        case 'white' : pickColor = 'black';
+            break;
+        case 'black' : pickColor = "red";
+            break;
+    }
+
     var name = "";
     for(var i = 0;i<5;i++) name += playerName[i];
     
+    ctx.fillStyle = "white";
     ctx.fillText(name, cw / 2, 450);
 
-    
+    ctx.fillStyle = "white";
+    ctx.fillText("Press ENTER to continue...", cw / 2, 550);
 }
 
 function pickNameHandler(ev){
@@ -352,6 +373,7 @@ function pickNameHandler(ev){
         playerIndex--;
         playerName[playerIndex] = '-';
     }
+    else if(ev.keyCode == 13) changeGameState(0);
 
 }
 
