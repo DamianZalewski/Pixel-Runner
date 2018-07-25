@@ -296,69 +296,6 @@ function gameOverMenu() {
     if (checkTopListBool) checkTopList(score);
 }
 
-function checkTopList(score){
-    checkTopListBool = false;
-    var values = [0,0,0,0,0];
-    
-    for(var i = 0;i<5;i++){
-        values[i] = localStorage.getItem(i);
-    }
-    
-    if(score>values[4]){
-        values[4] = score;
-        gameStage = 7;
-    }
-    values.sort(function(a, b){return b-a});
-        for(var i = 0;i<5;i++){
-        localStorage.setItem(i,values[i]);
-    }
-    
-    for(var i = 0;i<5;i++){
-        console.log("localStorage "+localStorage.getItem(i));
-        console.log("values "+values[i]);
-    }
-}
-
-function drawPickName(){
-    document.addEventListener("keyup", pickNameHandler);
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, cw, ch);
-    ctx.font = "50px arial";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "red";
-    ctx.fillText("GAME OVER", cw / 2, ch / 2 - 200);
-    ctx.fillStyle = "white";
-    ctx.fillText("Score: " + score, cw / 2, ch / 2 - 150);
-    
-    ctx.fillStyle  = pickColor;
-    ctx.fillText("NEW RECORD!", cw / 2, 350);
-    switch(pickColor){
-        case 'red': pickColor = 'orange';
-            break;
-        case 'orange' : pickColor = 'gray';
-            break;
-        case 'gray' : pickColor = 'yellow';
-            break;
-        case 'yellow' : pickColor = 'darkgray';
-            break;
-        case 'darkgray' : pickColor = 'white';
-            break;
-        case 'white' : pickColor = 'black';
-            break;
-        case 'black' : pickColor = "red";
-            break;
-    }
-
-    var name = "";
-    for(var i = 0;i<5;i++) name += playerName[i];
-    
-    ctx.fillStyle = "white";
-    ctx.fillText(name, cw / 2, 450);
-
-    ctx.fillStyle = "white";
-    ctx.fillText("Type your name and press ENTER to continue...", cw / 2, 550);
-}
-
 function pickNameHandler(ev){
     if(
         ((ev.keyCode >= 48 && ev.keyCode <= 57) ||
@@ -565,42 +502,6 @@ function mainMenuListener(ev) {
     }
 }
 
-function topList(){
-    drawTopList();
-    document.addEventListener("keyup",topListController);
-    document.addEventListener("click",topListController);
-}
-
-function topListController(ev){
-    document.removeEventListener("keyup",topListController);
-    document.removeEventListener("click",topListController);
-    gameStage = 0;
-}
-
-function drawTopList(){
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, cw, ch);
-    ctx.fillStyle = "white";
-    ctx.font = "50px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText("TOP LIST", cw / 2, 100);
-    ctx.fillStyle = "red";
-    ctx.fillText("--------------------------", cw / 2, 140);
-    ctx.fillStyle = "white";
-    ctx.font = "30px Arial";
-    
-    for(var i = 0;i<5;i++){
-        if(localStorage.getItem(i) != 0) {
-              let name = i;
-              let score = localStorage.getItem(i);
-              ctx.fillText("1. NAME : "+name+" " + "SCORE : "+score, cw / 2, 190+i*40);
-        }else{
-                ctx.fillText("2. NAME : -------   SCORE : -------", cw / 2, 190+i*40);
-        }
-    }
-    ctx.fillText("Press any key to return", cw / 2, 450);
-    
-}
 
 //----------------------------
 function gameLogic() {
@@ -636,80 +537,8 @@ function drawLogic() {
     drawScore();
 }
 
-//----------------------------
-function drawScore() {
-    ctx.fillStyle = "white";
-    ctx.font = "50px arial";
-    ctx.textAlign = "center";
-    ctx.fillText("Score: " + score, cw / 2, 80);
-}
-
-function changeScoreByTime() {
-    score += 10;
-}
-
-function changeScoreByEvent() {
-    score += 100;
-}
 
 
-function drawlifes() {
-    // 1.show how many lifes player have
-    for (var i = 0; i < playerLifes; i++) {
-        ctx.drawImage(playerLifesImage, playerLifeX + playerLifeSpace * i, playerLifeY, playerLifeWidth, playerLifeHeight);
-    }
-}
-
-function shot() {
-    if (shotAmmo != 0) {
-        shotAmmo--;
-        shotY = playerY + playerHeight / 2;
-        shotsXArray[shotCounter] = (playerX + playerWidth);
-        shotsYArray[shotCounter] = (shotY);
-        shotCounter++;
-    }
-}
-
-function shotMove() {
-    for (var i = 0; i < shotsXArray.length; i++) {
-        shotsXArray[i] += 10 + level;
-        if (shotsXArray[i] > cw) {
-            shotsXArray.splice(i, 1);
-            shotsYArray.splice(i, 1);
-            shotCounter--;
-        }
-    }
-}
-
-function drawShot() {
-    for (var i = 0; i < shotsXArray.length; i++) {
-
-
-        switch (bulletAnimationStage) {
-            case 0:
-                ctx.drawImage(bulletImage, shotsXArray[i], shotsYArray[i], shotWidth, shotHeight);
-                break;
-            case 1:
-                ctx.drawImage(bulletImage2, shotsXArray[i], shotsYArray[i], shotWidth, shotHeight);
-                break;
-            case 2:
-                ctx.drawImage(bulletImage3, shotsXArray[i], shotsYArray[i], shotWidth, shotHeight);
-                break;
-        }
-    }
-    if (bulletAnimationTimer == 5) {
-        bulletAnimationStage++;
-        bulletAnimationTimer = 0;
-    }
-    if (bulletAnimationStage > 2) bulletAnimationStage = 0;
-}
-
-function drawAmmo() {
-    for (var i = 0; i < shotAmmo; i++) {
-        ctx.drawImage(bulletImage, bulletX - i * bulletWidth / 2, bulletY, bulletWidth, bulletHeight);
-    }
-
-}
 
 function update() {
     backgroundX -= 5 + level;
@@ -749,47 +578,6 @@ function keyHandler(ev) {
     }
 }
 
-function reloadAmmo() {
-    if (shotAmmo < 5) {
-        shotAmmo++;
-    }
-}
-
-function jumpStart() {
-    if (jumpHigh < 300) jumpHigh += 10;
-    document.addEventListener("keyup", jumpTrue, false);
-
-}
-
-function jumpTrue() {
-    jump = true;
-    document.removeEventListener("keyup", jumpTrue, false);
-}
-
-function jumpHandler() {
-    if (jump) {
-        if (jumpCounter <= jumpHigh && !jumpFall) {
-            jumpCounter += jumpSpeed;
-            playerY -= jumpSpeed;
-
-        } else
-        if (jumpCounter <= 0) {
-            jumpFall = false;
-            jump = false;
-            jumpCounter = 0;
-            jumpHigh = 100;
-            jumpSpeed = 10;
-        } else {
-            jumpFall = true;
-            jumpCounter -= jumpSpeed;
-            playerY += jumpSpeed;
-
-        }
-
-
-    }
-
-}
 
 // draw background black game board
 function gameBoard() {
@@ -798,28 +586,6 @@ function gameBoard() {
 }
 
 
-// draw player character and his animation
-function drawPlayer() {
-    switch (playerAnimationStage) {
-        case 0:
-            ctx.drawImage(playerImage1, playerX, playerY, playerWidth, playerHeight);
-            break;
-        case 1:
-            ctx.drawImage(playerImage2, playerX, playerY, playerWidth, playerHeight);
-            break;
-        case 2:
-            ctx.drawImage(playerImage3, playerX, playerY, playerWidth, playerHeight);
-            break;
-        case 3:
-            ctx.drawImage(playerImage2, playerX, playerY, playerWidth, playerHeight);
-            break;
-    }
-    if (playerAnimationTimer == 5) {
-        playerAnimationStage++;
-        playerAnimationTimer = 0;
-    }
-    if (playerAnimationStage > 3) playerAnimationStage = 0;
-}
 
 function drawBackground() {
     ctx.drawImage(backgroundImage, backgroundX, backgroundY, backgroundWidth, backgroundHeight);
@@ -831,58 +597,4 @@ function drawBackground() {
 function drawFloor() {
     ctx.fillStyle = "green";
     ctx.fillRect(0, floorY, cw, ch - floorY);
-}
-/*
-function tryHole(){
-        if((Math.floor(Math.random()*100)+1)==1){
-    
-        holesArray[holesCounter] = cw+50;
-                holesCounter++;
-    }
-}
-function drawHole(){
-    ctx.fillStyle = "black";
-    for(var i = 0;i<holesArray.length;i++){
-        ctx.fillRect(holesArray[i],floorY,holeWidth,ch-floorY);
-    }
-}
-
-function moveHole(){
-    for(var i=0;i<holesArray.length;i++){
-        holesArray[i] -=5+level;
-        if(holesArray[i]<=-100){
-          holesArray.splice(i,1);
-            holesCounter--;
-        }
-    }
-}
-
-function checkHoleCollision(){
-for(var i=0;i<holesArray.length;i++){
-    if(((holesArray[i]<=playerX+playerWidth && 
-      holesArray[i]>=playerX) ||
-       (holesArray[i]+holeWidth <= playerX+playerWidth &&
-        holesArray[i]+holeWidth >= playerX
-        )) && !jump
-      ){
-        hitDetected();
-    } 
-}
-}
-*/
-function hitDetected() {
-    if (playerLifes == 0) {
-        changeGameState(3);
-    } else {
-        if (mortal) {
-            playerLifes--;
-            mortal = false;
-            setTimeout(switchMortal, 3000);
-        }
-
-    }
-}
-
-function switchMortal() {
-    mortal = true;
 }
