@@ -100,3 +100,39 @@ function drawPickName(){
     ctx.fillStyle = "white";
     ctx.fillText("Type your name and press ENTER to continue...", cw / 2, 550);
 }
+
+
+function pickNameHandler(ev){
+    if(
+        ((ev.keyCode >= 48 && ev.keyCode <= 57) ||
+        (ev.keyCode >= 65 && ev.keyCode <= 90)) &&
+        playerIndex < 5
+    )
+        {
+            playerName[playerIndex] = String.fromCharCode(ev.keyCode);
+            playerIndex++;
+        }
+    else if(ev.keyCode == 8) {
+        playerIndex--;
+        playerName[playerIndex] = '-';
+    }
+    else if(ev.keyCode == 13) changeGameState(0);
+
+}
+function instructionScreen() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.fillStyle = "white";
+    ctx.font = "50px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("NINJA RUNNER", cw / 2, 100);
+    ctx.fillText("TUTORIAL", cw / 2, 170);
+    ctx.fillStyle = "red";
+    ctx.fillText("--------------------------", cw / 2, 210);
+    ctx.fillStyle = "white";
+    ctx.fillText("Press 'SPACE' to jump.", cw / 2, 270);
+    ctx.fillText("Click 'LPM' to attack.", cw / 2, 340);
+    ctx.fillText("Press any key  to play", cw / 2, ch - 300);
+    document.addEventListener("keyup", instructionHandler);
+    
+}

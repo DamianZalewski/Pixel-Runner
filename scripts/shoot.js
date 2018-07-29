@@ -43,7 +43,7 @@ function shotMove() {
 }
 
 function shot() {
-    if (shotAmmo != 0) {
+    if (shotAmmo != 0 && allowShot) {
         shotAmmo--;
         shotY = playerY + playerHeight / 2;
         shotsXArray[shotCounter] = (playerX + playerWidth);
