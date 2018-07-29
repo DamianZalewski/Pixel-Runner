@@ -1,5 +1,5 @@
-const canvas = document.querySelector('canvas');
-const ctx = canvas.getContext('2d');
+var canvas = document.querySelector('canvas');
+var ctx = canvas.getContext('2d');
 canvas.width = screen.width;
 canvas.height = screen.height;
 var cw = canvas.width;
@@ -28,22 +28,8 @@ var playerLifeWidth = 50;
 var playerLifeHeight = 50;
 var playerLifeSpace = 20 + playerLifeWidth;
 var mortal = true;
-
-// background
-var backgroundImage = new Image();
-backgroundImage.src = "img/background.png";
-var backgroundImage2 = new Image();
-backgroundImage2.src = "img/gameBackground2.png";
-var backgroundX = 0;
-var backgroundY = 0;
-var backgroundWidth = cw;
-var backgroundHeight = ch;
-
 //----------------
 var playerAnimationTimer = 0;
-
-
-
 //----------------
 var jump = false;
 var jumpHigh = 100;
@@ -52,7 +38,6 @@ var jumpSpeed = 10;
 var jumpFall = false;
 //----------------
 var playerAnimationStage = 1;
-
 var floorY = playerY + playerHeight;
 //------------
 /*
@@ -121,6 +106,39 @@ var scoreIncreaseTime = 1000;
 //----------------
 var gameStage = 0;
 //----------------
+
+
+var changeStateAnimationCount = cw*1.5;
+var changeStateAnimationImage = new Image();
+changeStateAnimationImage.src = "img/changeAnimation.png";
+var stateI;
+//----------------------------
+var topListBackgroundImage = new Image();
+topListBackgroundImage.src = "img/stopMenuBackground.png";
+var topListWidth = 400;
+var topListHeight = 600;
+//---------------------------------
+var pickNameBool = true;
+var playerName = new Array(5);
+playerName = ['-','-','-','-','-'];
+var playerIndex = 0;
+//---------------------------------
+var allowJump = false;
+var allowShot = false;
+var checkTopListBool = true;
+var pickColor = 'red';
+// 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu   4- instruction screen
+
+// background
+var backgroundImage = new Image();
+backgroundImage.src = "img/background.png";
+var backgroundImage2 = new Image();
+backgroundImage2.src = "img/gameBackground2.png";
+var backgroundX = 0;
+var backgroundY = 0;
+var backgroundWidth = cw;
+var backgroundHeight = ch;
+
 // mainMenuBackground
 var mainMenubackgroundImage = new Image();
 mainMenubackgroundImage.src = "img/mainMenuBackground.png";
@@ -130,6 +148,7 @@ var mainMenuNewGameImage = new Image();
 mainMenuNewGameImage.src = "img/mainMenuNewGame.png";
 var mainMenuTopImage = new Image();
 mainMenuTopImage.src = "img/mainMenuTop.png";
+
 //---------------
 var mainMenubuttonWith = 400;
 var mainMenubuttonHeight = 100;
@@ -160,26 +179,49 @@ var gameOverMenuButtonY = ch / 2;
 var gameOverBackground = new Image();
 gameOverBackground.src = "img/deathBackground.png";
 //----------------------------
-var changeStateAnimationCount = cw*1.5;
-var changeStateAnimationImage = new Image();
-changeStateAnimationImage.src = "img/changeAnimation.png";
-var stateI;
-//----------------------------
-var topListBackgroundImage = new Image();
-topListBackgroundImage.src = "img/stopMenuBackground.png";
-var topListWidth = 400;
-var topListHeight = 600;
-//---------------------------------
-var pickNameBool = true;
-var playerName = new Array(5);
-playerName = ['-','-','-','-','-'];
-var playerIndex = 0;
-//---------------------------------
-var allowJump = false;
-var checkTopListBool = true;
-var pickColor = 'red';
-// 0 - main menu, 1 - game, 2 - game stop menu, 3 - game over menu   4- instruction screen
 
+
+function drawBackground() {
+    ctx.drawImage(backgroundImage, backgroundX, backgroundY, backgroundWidth, backgroundHeight);
+    ctx.drawImage(backgroundImage2, backgroundX + backgroundWidth, backgroundY, backgroundWidth, backgroundHeight);
+    ctx.drawImage(backgroundImage, backgroundX + 2 * backgroundWidth, backgroundY, backgroundWidth, backgroundHeight);
+    if (backgroundX < -2 * backgroundWidth) backgroundX = 0;
+}
+
+function drawFloor() {
+    ctx.fillStyle = "green";
+    ctx.fillRect(0, floorY, cw, ch - floorY);
+}
+
+function drawStopMenu() {
+    if (stopMenuAnimationY < stopMenuY) {
+        stopMenuAnimationY += 50;
+        drawLogic();
+        stopMenuButtonY = stopMenuAnimationY + stopMenuBackgroundHeight - 100;
+    }
+    ctx.drawImage(stopMenuBackgroundImage, stopMenuX, stopMenuAnimationY, stopMenuBackgroundWidth, stopMenuBackgroundHeight);
+    ctx.drawImage(stopMenuExitImage, stopMenuButtonX, stopMenuButtonY, stopMenuButtonWidth, stopMenuButtonHeight);
+    ctx.drawImage(stopMenuBackImage, stopMenuButtonX, stopMenuButtonY - stopButtonSpace, stopMenuButtonWidth, stopMenuButtonHeight);
+}
+
+//----------------------------
+function mainMenu() {
+    stopIntervals();
+    drawMainMenu();
+    checkTopListBool = true;
+    canvas.addEventListener("click", mainMenuListener, false);
+}
+
+function drawMainMenu() {
+    if (Math.floor((Math.random() * 100) + 1) % 22 == 0)
+        ctx.drawImage(mainMenubackgroundImage2, 0, 0, cw, ch);
+    else
+        ctx.drawImage(mainMenubackgroundImage, 0, 0, cw, ch);
+
+    ctx.drawImage(mainMenuNewGameImage, mainMenubuttonX, mainMenubuttonY, mainMenubuttonWith, mainMenubuttonHeight);
+    ctx.drawImage(mainMenuTopImage, mainMenubuttonX, mainMenubuttonY + mainMenubuttonHeight * 2, mainMenubuttonWith, mainMenubuttonHeight);
+    ctx.drawImage(mainMenuTopImage, mainMenubuttonX, mainMenubuttonY + mainMenubuttonHeight * 2, mainMenubuttonWith, mainMenubuttonHeight);
+}
 
 
 // initial game logic 
@@ -203,7 +245,7 @@ function changeGameState(i){
             drawMainMenu();
             break;
         case 1:
-            setTimeout(function(){allowJump = true},500);
+            setTimeout(function(){allowJump = true;allowShot = true},500);
             drawBackground();
             drawPlayer();
             drawlifes();
@@ -255,23 +297,7 @@ function game() {
 
 }
 //-------------------------
-function instructionScreen() {
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, cw, ch);
-    ctx.fillStyle = "white";
-    ctx.font = "50px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText("NINJA RUNNER", cw / 2, 100);
-    ctx.fillText("TUTORIAL", cw / 2, 170);
-    ctx.fillStyle = "red";
-    ctx.fillText("--------------------------", cw / 2, 210);
-    ctx.fillStyle = "white";
-    ctx.fillText("Press 'SPACE' to jump.", cw / 2, 270);
-    ctx.fillText("Click 'LPM' to attack.", cw / 2, 340);
-    ctx.fillText("Press any key  to play", cw / 2, ch - 300);
-    document.addEventListener("keyup", instructionHandler);
-    
-}
+
 
 function instructionHandler() {
     document.removeEventListener("keyup", instructionHandler);
@@ -294,24 +320,6 @@ function gameOverMenu() {
     ctx.fillText("Score: " + score, cw / 2, ch / 2 - 150);
     ctx.fillRect(gameOverMenuButtonX, gameOverMenuButtonY, gameOverMenuButtonWidth, gameOverMenuButtonHeight);
     if (checkTopListBool) checkTopList(score);
-}
-
-function pickNameHandler(ev){
-    if(
-        ((ev.keyCode >= 48 && ev.keyCode <= 57) ||
-        (ev.keyCode >= 65 && ev.keyCode <= 90)) &&
-        playerIndex < 5
-    )
-        {
-            playerName[playerIndex] = String.fromCharCode(ev.keyCode);
-            playerIndex++;
-        }
-    else if(ev.keyCode == 8) {
-        playerIndex--;
-        playerName[playerIndex] = '-';
-    }
-    else if(ev.keyCode == 13) changeGameState(0);
-
 }
 
 function gameOverMenuHandler(ev) {
@@ -390,6 +398,7 @@ function fullReset() {
     level = 0;
     //-----------------
     allowJump = false;
+    allowShot = false;
     pickNameBool = true;
     playerName = ['-','-','-','-','-'];
     playerIndex = 0;
@@ -449,35 +458,6 @@ function stopMenuHandler(ev) {
 
 }
 
-function drawStopMenu() {
-    if (stopMenuAnimationY < stopMenuY) {
-        stopMenuAnimationY += 50;
-        drawLogic();
-        stopMenuButtonY = stopMenuAnimationY + stopMenuBackgroundHeight - 100;
-    }
-    ctx.drawImage(stopMenuBackgroundImage, stopMenuX, stopMenuAnimationY, stopMenuBackgroundWidth, stopMenuBackgroundHeight);
-    ctx.drawImage(stopMenuExitImage, stopMenuButtonX, stopMenuButtonY, stopMenuButtonWidth, stopMenuButtonHeight);
-    ctx.drawImage(stopMenuBackImage, stopMenuButtonX, stopMenuButtonY - stopButtonSpace, stopMenuButtonWidth, stopMenuButtonHeight);
-}
-
-//----------------------------
-function mainMenu() {
-    stopIntervals();
-    drawMainMenu();
-    checkTopListBool = true;
-    canvas.addEventListener("click", mainMenuListener, false);
-}
-
-function drawMainMenu() {
-    if (Math.floor((Math.random() * 100) + 1) % 22 == 0)
-        ctx.drawImage(mainMenubackgroundImage2, 0, 0, cw, ch);
-    else
-        ctx.drawImage(mainMenubackgroundImage, 0, 0, cw, ch);
-
-    ctx.drawImage(mainMenuNewGameImage, mainMenubuttonX, mainMenubuttonY, mainMenubuttonWith, mainMenubuttonHeight);
-    ctx.drawImage(mainMenuTopImage, mainMenubuttonX, mainMenubuttonY + mainMenubuttonHeight * 2, mainMenubuttonWith, mainMenubuttonHeight);
-    ctx.drawImage(mainMenuTopImage, mainMenubuttonX, mainMenubuttonY + mainMenubuttonHeight * 2, mainMenubuttonWith, mainMenubuttonHeight);
-}
 
 function mainMenuListener(ev) {
     if (
@@ -585,16 +565,3 @@ function gameBoard() {
     ctx.fillRect(0, 0, cw, ch);
 }
 
-
-
-function drawBackground() {
-    ctx.drawImage(backgroundImage, backgroundX, backgroundY, backgroundWidth, backgroundHeight);
-    ctx.drawImage(backgroundImage2, backgroundX + backgroundWidth, backgroundY, backgroundWidth, backgroundHeight);
-    ctx.drawImage(backgroundImage, backgroundX + 2 * backgroundWidth, backgroundY, backgroundWidth, backgroundHeight);
-    if (backgroundX < -2 * backgroundWidth) backgroundX = 0;
-}
-
-function drawFloor() {
-    ctx.fillStyle = "green";
-    ctx.fillRect(0, floorY, cw, ch - floorY);
-}
