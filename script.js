@@ -51,8 +51,12 @@ var birdXArray = [];
 var birdYArray = [];
 var birdWidth = 40;
 var birdHeight = 40;
-var birdImage = new Image();
-birdImage.src = "img/bird.png";
+var birdImage1 = new Image();
+birdImage1.src = "img/bird1.png";
+var birdImage2 = new Image();
+birdImage2.src = "img/bird2.png";
+var birdAnimationTimer = 0;
+var birdAnimationStage = 0;
 var swingCounter = 0;
 var swingBool = false;
 //-----------------
@@ -70,8 +74,8 @@ var ninjaCounter = 0;
 var ninjaXArray = [];
 var ninjaAnimationTimer = 0;
 var ninjaAnimationStage = 0;
-var ninjaWidth = 40;
-var ninjaHeight = 60;
+var ninjaWidth = 60;
+var ninjaHeight = 80;
 var ninjaImage1 = new Image();
 ninjaImage1.src = "img/ninja1.png";
 var ninjaImage2 = new Image();
@@ -370,6 +374,8 @@ function fullReset() {
     birdYArray = [];
     swingCounter = 0;
     swingBool = false;
+    birdAnimationTimer = 0;
+    birdAnimationStage = 0;
     //----------------
     //----------------
     stoneCounter = 0;
@@ -524,7 +530,8 @@ function update() {
     backgroundX -= 5 + level;
     playerAnimationTimer++;
     bulletAnimationTimer++;
-    ninjaAnimationTimer++
+    ninjaAnimationTimer++;
+    birdAnimationTimer++;
     //  moveHole();
     moveBird();
     moveStone();
