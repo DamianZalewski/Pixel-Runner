@@ -10,10 +10,26 @@ function tryBird() {
 }
 
 function drawBird() {
+        console.log(birdAnimationStage);
     for (var i = 0; i < birdXArray.length; i++) {
-        ctx.drawImage(birdImage, birdXArray[i], birdYArray[i], birdWidth, birdHeight);
+  
+        switch (birdAnimationStage) {
+            case 0:
+                ctx.drawImage(birdImage1, birdXArray[i], birdYArray[i], birdWidth, birdHeight);
+                break;
+            case 1:
+                ctx.drawImage(birdImage2, birdXArray[i], birdYArray[i], birdWidth, birdHeight);
+                break;
+        }
     }
+    if (birdAnimationTimer == 3) {
+        birdAnimationStage++;
+        birdAnimationTimer = 0;
+    }
+    if (birdAnimationStage > 1) birdAnimationStage = 0;
+
 }
+
 
 function moveBird() {
     for (var i = 0; i < birdXArray.length; i++) {
