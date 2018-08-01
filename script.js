@@ -177,11 +177,11 @@ var stopButtonSpace = 100;
 var stopMenuAnimationY = -stopMenuBackgroundHeight;
 //----------------------------
 var gameOverMenuButtonWidth = 350;
-var gameOverMenuButtonHeight = 50;
+var gameOverMenuButtonHeight = 70;
 var gameOverMenuButtonX = cw / 2 - gameOverMenuButtonWidth / 2;
 var gameOverMenuButtonY = ch / 2;
-var gameOverBackground = new Image();
-gameOverBackground.src = "img/deathBackground.png";
+var gameOverImage = new Image();
+gameOverImage.src = "img/gameOverButton.png";
 //----------------------------
 
 
@@ -322,7 +322,7 @@ function gameOverMenu() {
     ctx.fillText("GAME OVER", cw / 2, ch / 2 - 200);
     ctx.fillStyle = "white";
     ctx.fillText("Score: " + score, cw / 2, ch / 2 - 150);
-    ctx.fillRect(gameOverMenuButtonX, gameOverMenuButtonY, gameOverMenuButtonWidth, gameOverMenuButtonHeight);
+    ctx.drawImage(gameOverImage,gameOverMenuButtonX, gameOverMenuButtonY, gameOverMenuButtonWidth, gameOverMenuButtonHeight);
     if (checkTopListBool) checkTopList(score);
 }
 
