@@ -138,6 +138,8 @@ var backgroundImage = new Image();
 backgroundImage.src = "img/background.png";
 var backgroundImage2 = new Image();
 backgroundImage2.src = "img/gameBackground2.png";
+var backgroundImage3 = new Image();
+backgroundImage3.src = "img/gameBackground3.png";
 var backgroundX = 0;
 var backgroundY = 0;
 var backgroundWidth = cw;
@@ -164,7 +166,7 @@ var stopMenuBackgroundHeight = 300;
 var stopMenuBackgroundImage = new Image();
 stopMenuBackgroundImage.src = "img/stopMenuBackground.png";
 var stopMenuBackImage = new Image();
-stopMenuBackImage.src = "img/stopMenuBackButton.png";
+stopMenuBackImage.src = "img/gameOverButton.png";
 var stopMenuExitImage = new Image();
 stopMenuExitImage.src = "img/stopMenuExitButton.png";
 var stopMenuX = cw / 2 - stopMenuBackgroundWidth / 2;
@@ -188,8 +190,9 @@ gameOverImage.src = "img/gameOverButton.png";
 function drawBackground() {
     ctx.drawImage(backgroundImage, backgroundX, backgroundY, backgroundWidth, backgroundHeight);
     ctx.drawImage(backgroundImage2, backgroundX + backgroundWidth, backgroundY, backgroundWidth, backgroundHeight);
-    ctx.drawImage(backgroundImage, backgroundX + 2 * backgroundWidth, backgroundY, backgroundWidth, backgroundHeight);
-    if (backgroundX < -2 * backgroundWidth) backgroundX = 0;
+    ctx.drawImage(backgroundImage3, backgroundX + 2 * backgroundWidth, backgroundY, backgroundWidth, backgroundHeight);
+    ctx.drawImage(backgroundImage, backgroundX + 3 * backgroundWidth, backgroundY, backgroundWidth, backgroundHeight);
+    if (backgroundX < -3 * backgroundWidth) backgroundX = 0;
 }
 
 function drawFloor() {
