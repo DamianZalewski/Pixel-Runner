@@ -27,6 +27,8 @@ function hitDetected() {
         changeGameState(3);
     } else {
         if (mortal) {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0,0,cw,ch);
             playerLifes--;
             mortal = false;
             setTimeout(switchMortal, 3000);
