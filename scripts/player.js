@@ -14,6 +14,7 @@ function drawPlayer() {
             ctx.drawImage(playerImage2, playerX, playerY, playerWidth, playerHeight);
             break;
     }
+    if(!mortal && playerLifes!=0) ctx.drawImage(barrierImage, playerX-10, playerY-10, playerWidth+20, playerHeight+20);
     if (playerAnimationTimer == 5) {
         playerAnimationStage++;
         playerAnimationTimer = 0;
