@@ -53,10 +53,10 @@ function checkTopList(score){
         localStorage.setItem(i,values[i]);
     }
     
-    for(var i = 0;i<5;i++){
-        console.log("localStorage "+localStorage.getItem(i));
-        console.log("values "+values[i]);
-    }
+//    for(var i = 0;i<5;i++){
+//        console.log("localStorage "+localStorage.getItem(i));
+//        console.log("values "+values[i]);
+//    }
 }
 
 
@@ -99,6 +99,11 @@ function drawPickName(){
 
     ctx.fillStyle = "white";
     ctx.fillText("Type your name and press ENTER to continue...", cw / 2, 550);
+    
+    ctx.drawImage(rewardImage,rewardX,rewardY,rewardWidth,rewardHeight);
+    ctx.drawImage(rewardImage,cw - rewardX - rewardWidth,rewardY,rewardWidth,rewardHeight);
+    
+    
 }
 
 
@@ -116,7 +121,11 @@ function pickNameHandler(ev){
         playerIndex--;
         playerName[playerIndex] = '-';
     }
-    else if(ev.keyCode == 13) changeGameState(0);
+    else if(ev.keyCode == 13) {
+        fullReset();
+        changeGameState(0);
+        
+    }
 
 }
 function instructionScreen() {
