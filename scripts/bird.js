@@ -73,6 +73,7 @@ function birdBulletCollision() {
                 //destroy bird and bullet
                 birdXArray[j] = -100;
                 shotsXArray[i] = cw;
+                hitSound.play();
                 changeScoreByEvent();
             }
         }
