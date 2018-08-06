@@ -187,7 +187,13 @@ var gameOverMenuButtonY = ch / 2;
 var gameOverImage = new Image();
 gameOverImage.src = "img/gameOverButton.png";
 //----------------------------
-
+var hitSound = new sound("sounds/sound.mp3");
+var introSound = new sound("sounds/intro.mp3");
+var gameSound = new sound("sounds/game.wav");
+var gameOverSound = new sound("sounds/gameOver.mp3");
+    introSound.sound.setAttribute("loop", "loop");
+    gameSound.sound.setAttribute("loop", "loop");
+    gameOverSound.sound.setAttribute("loop", "loop");
 
 function drawBackground() {
     ctx.drawImage(backgroundImage, backgroundX, backgroundY, backgroundWidth, backgroundHeight);
@@ -216,6 +222,7 @@ function drawStopMenu() {
 //----------------------------
 function mainMenu() {
     stopIntervals();
+    introSound.play();
     drawMainMenu();
     checkTopListBool = true;
     canvas.addEventListener("click", mainMenuListener, false);
@@ -315,6 +322,8 @@ function instructionHandler() {
 
 
 function gameOverMenu() {
+    gameSound.stop();
+    gameOverSound.play();
     stopIntervals();
     document.addEventListener("click", gameOverMenuHandler);
     canvas.removeEventListener("click", shot);
@@ -340,6 +349,7 @@ function gameOverMenuHandler(ev) {
     ) {
         changeGameState(0);
         document.removeEventListener("click", gameOverMenuHandler);
+        gameOverSound.stop();
         fullReset();
     }
 }
@@ -434,7 +444,7 @@ function stopMenuHandler(ev) {
         document.removeEventListener("click", stopMenuHandler);
         canvas.addEventListener("click", shot, false);
         stopMenuAnimationY = -stopMenuBackgroundHeight;
-
+            
         gameStage = 1;
         startIntervals();
     } else if (
@@ -445,7 +455,7 @@ function stopMenuHandler(ev) {
     ) {
         // button nr 2 / exit
         fullReset();
- 
+        gameSound.stop();
         changeGameState(0);
         document.removeEventListener("keydown", stopMenuHandler);
         document.removeEventListener("click", stopMenuHandler);
@@ -480,6 +490,7 @@ function mainMenuListener(ev) {
     ) {
         init();
         canvas.removeEventListener("click", mainMenuListener);
+        introSound.stop();
         changeGameState(4);
     } else if (
         ev.clientY >= mainMenubuttonY + 2 * mainMenubuttonHeight &&
@@ -496,6 +507,7 @@ function mainMenuListener(ev) {
 
 //----------------------------
 function gameLogic() {
+    gameSound.play();
     if(playerLifes==0) changeGameState(3);
     //  tryHole();
     tryBird();
