@@ -195,6 +195,13 @@ var gameOverSound = new sound("sounds/gameOver.mp3");
     gameSound.sound.setAttribute("loop", "loop");
     gameOverSound.sound.setAttribute("loop", "loop");
 
+var rewardImage = new Image();
+rewardImage.src = "img/reward.png";
+var rewardWidth = 180;
+var rewardHeight = 180;
+var rewardX = 250;
+var rewardY = ch/2 - rewardHeight/2-60;
+
 function drawBackground() {
     ctx.drawImage(backgroundImage, backgroundX, backgroundY, backgroundWidth, backgroundHeight);
     ctx.drawImage(backgroundImage2, backgroundX + backgroundWidth, backgroundY, backgroundWidth, backgroundHeight);
