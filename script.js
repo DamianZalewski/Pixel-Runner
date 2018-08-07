@@ -183,9 +183,15 @@ var stopMenuAnimationY = -stopMenuBackgroundHeight;
 var gameOverMenuButtonWidth = 350;
 var gameOverMenuButtonHeight = 70;
 var gameOverMenuButtonX = cw / 2 - gameOverMenuButtonWidth / 2;
-var gameOverMenuButtonY = ch / 2;
+var gameOverMenuButtonY = ch / 2+80;
 var gameOverImage = new Image();
 gameOverImage.src = "img/gameOverButton.png";
+var ripImage = new Image();
+ripImage.src = "img/rip.png";
+var ripWidth = 180;
+var ripHeight = 180;
+var ripX = cw/2-ripWidth/2;
+var ripY = ch/2 - ripHeight/2-60;
 //----------------------------
 var hitSound = new sound("sounds/sound.mp3");
 var introSound = new sound("sounds/intro.mp3");
@@ -193,7 +199,7 @@ var gameSound = new sound("sounds/game.wav");
 var gameOverSound = new sound("sounds/gameOver.mp3");
     introSound.sound.setAttribute("loop", "loop");
     gameSound.sound.setAttribute("loop", "loop");
-    gameOverSound.sound.setAttribute("loop", "loop");
+    gameOverSound.sound.setAttribute("loop", "loop");   
 
 var rewardImage = new Image();
 rewardImage.src = "img/reward.png";
@@ -340,9 +346,10 @@ function gameOverMenu() {
     ctx.font = "50px arial";
     ctx.textAlign = "center";
     ctx.fillStyle = "red";
-    ctx.fillText("GAME OVER", cw / 2, ch / 2 - 200);
+    ctx.fillText("GAME OVER", cw / 2, ch / 2 - 220);
     ctx.fillStyle = "white";
-    ctx.fillText("Score: " + score, cw / 2, ch / 2 - 150);
+    ctx.fillText("Score: " + score, cw / 2, ch / 2 - 170);
+    ctx.drawImage(ripImage,ripX, ripY, ripWidth, ripHeight);
     ctx.drawImage(gameOverImage,gameOverMenuButtonX, gameOverMenuButtonY, gameOverMenuButtonWidth, gameOverMenuButtonHeight);
     if (checkTopListBool) checkTopList(score);
 }
